@@ -9,19 +9,24 @@
 const char DIR_PATH[] = "./exercises";
 const int DIR_TYPE_CODE = 4;
 const int FILE_TYPE_CODE = 8;
-const int TOTAL_EXERCISES = 2;
+const int TOTAL_EXERCISES_DIRS = 2;
 const char README_FILE_NM[] = "README.md";
+
+typedef enum {
+    EXERCISE,
+    README
+} FileType;
 
 typedef struct {
     char *file_path;
     char *file_contents;
+    FileType file_type;
 } File;
 
 typedef struct {
-    File *exercise_files;
-    char *readme_contents;
+    File *files;
     size_t file_ct;
-} ExerciseDir;
+} Directory;
 
 
 /// This assumes that any path does not contain any dividers
@@ -84,19 +89,20 @@ char* read_file_contents(char *file_path) {
     return file_buff;
 }
 
-void add_exercise(ExerciseDir **exercise, File *files, int file_ct, char *readme, int index) {
-    (*exercise)[index].exercise_files = malloc(sizeof(File) * file_ct);
+void add_dir(Directory **dirs, File *files, int file_ct, int dir_idx) {
+    (*dirs)[dir_idx].files = malloc(sizeof(File) * file_ct);
 
     for (int i = 0; i < file_ct; i++) {
-        (*exercise)[index].exercise_files[i].file_path = strdup(files[i].file_path);
-        (*exercise)[index].exercise_files[i].file_contents = strdup(files[i].file_contents);
+        (*dirs)[dir_idx].files[i].file_path = strdup(files[i].file_path);
+        (*dirs)[dir_idx].files[i].file_contents = strdup(files[i].file_contents);
+        (*dirs)[dir_idx].files[i].file_type = files[i].file_type;
     }
 
-    (*exercise)[index].file_ct = file_ct;
-    (*exercise)[index].readme_contents = strdup(readme);
+    (*dirs)[dir_idx].file_ct = file_ct;
 }
 
-void load_exercises(ExerciseDir **exercise) {
+/// Loops through target directory path and loads files into Directory double pointer
+void load_files(Directory **dirs) {
     struct dirent *de;
     DIR *dir = opendir(DIR_PATH);
 
@@ -105,7 +111,8 @@ void load_exercises(ExerciseDir **exercise) {
         exit(1);
     }
 
-    int exercise_ct = 0;
+    File *files;
+    int dir_idx = 0;
 
     while ((de = readdir(dir)) != NULL) {
         int file_type = de->d_type;
@@ -127,9 +134,8 @@ void load_exercises(ExerciseDir **exercise) {
             exit(1);
         }
 
-        int file_ct = 0;
-        File *exercise_files;
-        char *readme_contents;
+        int file_idx = 0;
+        File *dir_files;
 
         while ((nde = readdir(ndir)) != NULL) {
             int file_type = nde->d_type;
@@ -137,37 +143,32 @@ void load_exercises(ExerciseDir **exercise) {
             if (file_type == FILE_TYPE_CODE) {
                 char *paths[] = { (char *)DIR_PATH, de->d_name, nde->d_name};
                 char *full_path = build_file_path(paths, 3, "");
-                printf("Processing: %s \n", full_path); 
-
                 char *file_contents = read_file_contents(full_path);
                 int file_path_size = strlen(full_path) + 1;
                 int file_contents_size = strlen(file_contents) + 1;
 
-                if (strcmp(file_name, README_FILE_NM) == 0) {
-                    readme_contents = malloc(file_contents_size);
-                    strcpy(readme_contents, file_contents);
-                } else { // these can be assumed to be exercise files
-                    if (file_ct == 0) {
-                        exercise_files = malloc(sizeof(File));
-                    } else {
-                        exercise_files = realloc(exercise_files, (file_ct + 1) * sizeof(File));
-                    }         
+                if (file_idx == 0) {
+                    dir_files = malloc(sizeof(File));
+                } else {
+                    dir_files = realloc(dir_files, (file_idx + 1) * sizeof(File));
+                }         
 
-                    exercise_files[file_ct].file_path = malloc(file_path_size);
-                    strcpy(exercise_files[file_ct].file_path, full_path);
-                    exercise_files[file_ct].file_contents = malloc(file_contents_size);
-                    strcpy(exercise_files[file_ct].file_contents, file_contents);
+                dir_files[file_idx].file_type = strcmp(file_name, README_FILE_NM) == 0 ? README:EXERCISE;
+                dir_files[file_idx].file_path = malloc(file_path_size);
+                strcpy(dir_files[file_idx].file_path, full_path);
+                dir_files[file_idx].file_contents = malloc(file_contents_size);
+                strcpy(dir_files[file_idx].file_contents, file_contents);
 
-                    file_ct++;
-                }
+                file_idx++;
 
                 free(full_path);
                 free(file_contents);
             }
         }
 
-        add_exercise(exercise, exercise_files, file_ct, readme_contents, exercise_ct);
-        exercise_ct++;
+        add_dir(dirs, dir_files, file_idx, dir_idx);
+
+        dir_idx++;
         closedir(ndir);
         free(nested_path);
     }
@@ -176,35 +177,32 @@ void load_exercises(ExerciseDir **exercise) {
 }
 
 int main() {
-    ExerciseDir *exercises = malloc(TOTAL_EXERCISES * sizeof(ExerciseDir));
-
-    if (exercises == NULL) {
-        perror("Failed allocate memory for exercise");
+    Directory *dirs = malloc(TOTAL_EXERCISES_DIRS * sizeof(Directory));
+    if (dirs == NULL) {
+        perror("Failed allocate memory for dirs");
         exit(1);
     }
 
-    load_exercises(&exercises);
+    load_files(&dirs);
 
-    for (int i = 0; i < TOTAL_EXERCISES; i++) {
-        printf("File: %i | readme: %s \n", i, exercises[i].readme_contents); 
-
-        for (int e = 0; e < exercises[i].file_ct; e++) {
-            printf("File path: %s \n", exercises[i].exercise_files[e].file_path); 
-            printf("exercise contents: %s \n", exercises[i].exercise_files[e].file_contents);
+    for (int i = 0; i < TOTAL_EXERCISES_DIRS; i++) {
+        for (int e = 0; e < dirs[i].file_ct; e++) {
+            printf("File path: %s \n", dirs[i].files[e].file_path); 
+            printf("File type: %i \n", dirs[i].files[e].file_type); 
+            printf("exercise contents: %s \n", dirs[i].files[e].file_contents);
             
         }
     }
 
     // cleanup 
-    for (int i = 0; i < TOTAL_EXERCISES; i++) {
-        for (int e = 0; e < exercises[i].file_ct; e++) {
-            free(exercises[i].exercise_files[e].file_path);
-            free(exercises[i].exercise_files[e].file_contents);
+    for (int i = 0; i < TOTAL_EXERCISES_DIRS; i++) {
+        for (int e = 0; e < dirs[i].file_ct; e++) {
+            free(dirs[i].files[e].file_path);
+            free(dirs[i].files[e].file_contents);
         }
-        free(exercises[i].readme_contents);
     }
 
-    free(exercises);
+    free(dirs);
 
     return 0;
 }
