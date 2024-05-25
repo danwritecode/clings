@@ -9,6 +9,8 @@
 const char DIR_PATH[] = "./exercises";
 const int DIR_TYPE_CODE = 4;
 const int FILE_TYPE_CODE = 8;
+const int TOTAL_EXERCISES = 2;
+const char README_FILE_NM[] = "README.md";
 
 typedef struct {
     char *file_path;
@@ -16,14 +18,15 @@ typedef struct {
 } File;
 
 typedef struct {
-    File **exercise_files;
+    File *exercise_files;
     char *readme_contents;
+    size_t file_ct;
 } ExerciseDir;
 
 
 /// This assumes that any path does not contain any dividers
 /// *base_path = "../" or "./" or "/" if needed, otherwise pass ""
-char* concat_path_dyn(char **paths, int size, char *base_path) {
+char* build_file_path(char **paths, int size, char *base_path) {
     int str_len = 1;
     for (int i = 0; i < size; i++) {
         str_len += strlen(paths[i]) + 1;
@@ -49,7 +52,8 @@ char* concat_path_dyn(char **paths, int size, char *base_path) {
     return str_buff;
 }
 
-void read_file(char *file_path) {
+
+char* read_file_contents(char *file_path) {
     struct stat fstat_buff;
     FILE *file = fopen(file_path, "r");
 
@@ -75,15 +79,24 @@ void read_file(char *file_path) {
 
     fread(file_buff, 1, file_size, file);
     file_buff[file_size] = '\0';
-
-    printf("file contents: %s \n", file_buff);
-
     fclose(file);
-    free(file_buff);
+
+    return file_buff;
 }
 
+void add_exercise(ExerciseDir **exercise, File *files, int file_ct, char *readme, int index) {
+    (*exercise)[index].exercise_files = malloc(sizeof(File) * file_ct);
 
-void load_exercises(ExerciseDir *exercise) {
+    for (int i = 0; i < file_ct; i++) {
+        (*exercise)[index].exercise_files[i].file_path = strdup(files[i].file_path);
+        (*exercise)[index].exercise_files[i].file_contents = strdup(files[i].file_contents);
+    }
+
+    (*exercise)[index].file_ct = file_ct;
+    (*exercise)[index].readme_contents = strdup(readme);
+}
+
+void load_exercises(ExerciseDir **exercise) {
     struct dirent *de;
     DIR *dir = opendir(DIR_PATH);
 
@@ -92,15 +105,19 @@ void load_exercises(ExerciseDir *exercise) {
         exit(1);
     }
 
+    int exercise_ct = 0;
+
     while ((de = readdir(dir)) != NULL) {
         int file_type = de->d_type;
 
         if (file_type != DIR_TYPE_CODE) continue;
         if (strcmp(de->d_name, "..") == 0 || strcmp(de->d_name, ".") == 0) continue;
 
+        printf("dir: %s \n", de->d_name);
+
         // expecting only directories here at 1 layer depth, not using recursion cause lazy
         char *paths[] = { (char *)DIR_PATH, de->d_name };
-        char *nested_path = concat_path_dyn(paths, 2, "");
+        char *nested_path = build_file_path(paths, 2, "");
 
         struct dirent *nde;
         DIR *ndir = opendir(nested_path);
@@ -110,18 +127,47 @@ void load_exercises(ExerciseDir *exercise) {
             exit(1);
         }
 
+        int file_ct = 0;
+        File *exercise_files;
+        char *readme_contents;
+
         while ((nde = readdir(ndir)) != NULL) {
             int file_type = nde->d_type;
+            char *file_name = nde->d_name;
             if (file_type == FILE_TYPE_CODE) {
                 char *paths[] = { (char *)DIR_PATH, de->d_name, nde->d_name};
-                char *full_path = concat_path_dyn(paths, 3, "");
+                char *full_path = build_file_path(paths, 3, "");
                 printf("Processing: %s \n", full_path); 
-                read_file(full_path);
+
+                char *file_contents = read_file_contents(full_path);
+                int file_path_size = strlen(full_path) + 1;
+                int file_contents_size = strlen(file_contents) + 1;
+
+                if (strcmp(file_name, README_FILE_NM) == 0) {
+                    readme_contents = malloc(file_contents_size);
+                    strcpy(readme_contents, file_contents);
+                } else { // these can be assumed to be exercise files
+                    if (file_ct == 0) {
+                        exercise_files = malloc(sizeof(File));
+                    } else {
+                        exercise_files = realloc(exercise_files, (file_ct + 1) * sizeof(File));
+                    }         
+
+                    exercise_files[file_ct].file_path = malloc(file_path_size);
+                    strcpy(exercise_files[file_ct].file_path, full_path);
+                    exercise_files[file_ct].file_contents = malloc(file_contents_size);
+                    strcpy(exercise_files[file_ct].file_contents, file_contents);
+
+                    file_ct++;
+                }
 
                 free(full_path);
+                free(file_contents);
             }
         }
 
+        add_exercise(exercise, exercise_files, file_ct, readme_contents, exercise_ct);
+        exercise_ct++;
         closedir(ndir);
         free(nested_path);
     }
@@ -130,28 +176,35 @@ void load_exercises(ExerciseDir *exercise) {
 }
 
 int main() {
-    ExerciseDir exercise;
-    load_exercises(&exercise);
+    ExerciseDir *exercises = malloc(TOTAL_EXERCISES * sizeof(ExerciseDir));
+
+    if (exercises == NULL) {
+        perror("Failed allocate memory for exercise");
+        exit(1);
+    }
+
+    load_exercises(&exercises);
+
+    for (int i = 0; i < TOTAL_EXERCISES; i++) {
+        printf("File: %i | readme: %s \n", i, exercises[i].readme_contents); 
+
+        for (int e = 0; e < exercises[i].file_ct; e++) {
+            printf("File path: %s \n", exercises[i].exercise_files[e].file_path); 
+            printf("exercise contents: %s \n", exercises[i].exercise_files[e].file_contents);
+            
+        }
+    }
+
+    // cleanup 
+    for (int i = 0; i < TOTAL_EXERCISES; i++) {
+        for (int e = 0; e < exercises[i].file_ct; e++) {
+            free(exercises[i].exercise_files[e].file_path);
+            free(exercises[i].exercise_files[e].file_contents);
+        }
+        free(exercises[i].readme_contents);
+    }
+
+    free(exercises);
 
     return 0;
 }
-
-// FILE *file = fopen("prog.c", "r");
-// if (file == NULL) {
-//     perror("Failed to open file");
-//     return 1;
-// }
-// fputs(prog, file);
-// fclose(file);
-//
-// // compile the program
-// if (system("gcc -o prog prog.c") == -1) {
-//     perror("Failed to compile program");
-//     return 1;
-// }
-//
-// // run the program
-// if (system("./prog") == -1) {
-//     perror("Failed to run program");
-//     return 1;
-// }
