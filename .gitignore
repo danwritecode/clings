@@ -1,3 +1,5 @@
 main
 /obj
 /bin
+*.o
+clings
