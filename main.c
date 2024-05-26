@@ -41,10 +41,11 @@ int main() {
                 // look for file diffs
                 bool file_diff = dirs[i]->files[e].file_diff;
                 char *file_path = dirs[i]->files[e].file_path;
+                char *file_name = dirs[i]->files[e].file_name;
                 FileType file_type = dirs[i]->files[e].file_type;
 
                 if (file_type == EXERCISE) {
-                    int res = exec_compile(file_path);
+                    int res = exec_compile(file_path, file_name);
                     printf("exec exit code: %i \n", res);
                 }
 

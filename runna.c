@@ -31,19 +31,19 @@ int exec_cmd(char *command) {
 	return -1;
 }
 
-int exec_compile(char *file_path) {
+int exec_compile(char *file_path, char *file_name) {
     int path_len = strlen(file_path);
-    int buff_size = path_len + (path_len - 2) + 35; // 35 is for gcc flags and other stuff
+    int file_name_len = strlen(file_name);
+    int buff_size = path_len + file_name_len + 35; // 35 is for gcc flags and other stuff
 
     // create snprintf buffer
     char *compile_cmd = malloc(buff_size);
 
     // create buffer for filename slicing
-    char *file_path_no_ext = malloc(path_len - 2);
-    strncpy(file_path_no_ext, file_path, path_len - 2);
+    char *file_name_no_ext = malloc(file_name_len - 2);
+    strncpy(file_name_no_ext, file_name, file_name_len - 2);
 
-    snprintf(compile_cmd, buff_size, "gcc %s -o %s%s -Wall -Wextra -Werror", file_path, file_path_no_ext, ".bin");
-	printf("cmd: %s \n", compile_cmd);
+    snprintf(compile_cmd, buff_size, "gcc %s -o %s -Wall -Wextra -Werror", file_name, file_name_no_ext);
 
     return exec_cmd(compile_cmd);
 }
