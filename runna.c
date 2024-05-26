@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define BIN_PATH "./bin"
+
 const int MAX_LINES = 500;
 int exec_cmd(char *command) {
 	FILE *fp;
@@ -31,19 +33,27 @@ int exec_cmd(char *command) {
 	return -1;
 }
 
-int exec_compile(char *file_path, char *file_name) {
+int exec_compile(char *file_path, char *file_name_no_ext) {
     int path_len = strlen(file_path);
-    int file_name_len = strlen(file_name);
-    int buff_size = path_len + file_name_len + 35; // 35 is for gcc flags and other stuff
+    int file_name_len = strlen(file_name_no_ext);
+    int buff_size = path_len + file_name_len + 45; // 35 is for gcc flags and other stuff
 
     // create snprintf buffer
     char *compile_cmd = malloc(buff_size);
+    snprintf(compile_cmd, buff_size, "gcc %s -o %s/%s -Wall -Wextra -Werror", file_path, BIN_PATH ,file_name_no_ext);
 
-    // create buffer for filename slicing
-    char *file_name_no_ext = malloc(file_name_len - 2);
-    strncpy(file_name_no_ext, file_name, file_name_len - 2);
+    int res_code = exec_cmd(compile_cmd);
 
-    snprintf(compile_cmd, buff_size, "gcc %s -o %s -Wall -Wextra -Werror", file_name, file_name_no_ext);
+	free(compile_cmd);
+	return res_code;
+}
 
-    return exec_cmd(compile_cmd);
+int exec_run(char *file_name_no_ext) {
+	int file_path_size = strlen(file_name_no_ext) + 7;
+	char *file_path = malloc(file_path_size); // add 5 for binary path
+	snprintf(file_path, file_path_size, "%s/%s", BIN_PATH, file_name_no_ext);
+    int res_code = exec_cmd(file_path);
+
+	free(file_path);
+	return res_code;
 }

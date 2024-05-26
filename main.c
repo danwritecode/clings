@@ -41,12 +41,14 @@ int main() {
                 // look for file diffs
                 bool file_diff = dirs[i]->files[e].file_diff;
                 char *file_path = dirs[i]->files[e].file_path;
-                char *file_name = dirs[i]->files[e].file_name;
+                char *file_name_no_ext = dirs[i]->files[e].file_name_no_ext;
                 FileType file_type = dirs[i]->files[e].file_type;
 
                 if (file_type == EXERCISE) {
-                    int res = exec_compile(file_path, file_name);
-                    printf("exec exit code: %i \n", res);
+                    int compile_res = exec_compile(file_path, file_name_no_ext);
+                    printf("compile exec exit code: %i \n", compile_res);
+                    int run_res = exec_run(file_name_no_ext);
+                    printf("run exec exit code: %i \n", run_res);
                 }
 
                 if (file_diff == true) {
@@ -69,24 +71,3 @@ int main() {
     free(dirs);
     return 0;
 }
-
-
-// FILE *file = fopen("prog.c", "r");
-// if (file == NULL) {
-//     perror("Failed to open file");
-//     return 1;
-// }
-// fputs(prog, file);
-// fclose(file);
-//
-// // compile the program
-// if (system("gcc -o prog prog.c") == -1) {
-//     perror("Failed to compile program");
-//     return 1;
-// }
-//
-// // run the program
-// if (system("./prog") == -1) {
-//     perror("Failed to run program");
-//     return 1;
-// }

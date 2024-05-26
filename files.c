@@ -88,6 +88,7 @@ void add_dir(Directory **dirs, File *files, int file_ct, int dir_idx) {
     for (int i = 0; i < file_ct; i++) {
         dirs[dir_idx]->files[i].file_path = strdup(files[i].file_path);
         dirs[dir_idx]->files[i].file_name = strdup(files[i].file_name);
+        dirs[dir_idx]->files[i].file_name_no_ext = strdup(files[i].file_name_no_ext);
         dirs[dir_idx]->files[i].parent_dir_path = strdup(files[i].parent_dir_path);
         dirs[dir_idx]->files[i].file_contents = strdup(files[i].file_contents);
         dirs[dir_idx]->files[i].file_type = files[i].file_type;
@@ -141,6 +142,7 @@ void load_files(Directory **dirs) {
                 int file_path_size = strlen(full_path) + 1;
                 int file_name_size = strlen(file_name) + 1;
                 int file_contents_size = strlen(file_contents) + 1;
+                int file_type = strcmp(file_name, README_FILE_NM) == 0 ? README:EXERCISE;
 
                 if (file_idx == 0) {
                     dir_files = malloc(sizeof(File));
@@ -148,7 +150,8 @@ void load_files(Directory **dirs) {
                     dir_files = realloc(dir_files, (file_idx + 1) * sizeof(File));
                 }         
 
-                dir_files[file_idx].file_type = strcmp(file_name, README_FILE_NM) == 0 ? README:EXERCISE;
+                // file type
+                dir_files[file_idx].file_type = file_type;
 
                 // file path
                 dir_files[file_idx].file_path = malloc(file_path_size);
@@ -157,6 +160,17 @@ void load_files(Directory **dirs) {
                 // file name
                 dir_files[file_idx].file_name = malloc(file_name_size);
                 strcpy(dir_files[file_idx].file_name, file_name);
+
+                if (file_type == EXERCISE) {
+                    dir_files[file_idx].file_name_no_ext = malloc(file_name_size - 3);
+                    strncpy(dir_files[file_idx].file_name_no_ext, file_name, file_name_size - 3);
+                } else if (file_type == README) {
+                    dir_files[file_idx].file_name_no_ext = malloc(file_name_size - 4);
+                    strncpy(dir_files[file_idx].file_name_no_ext, file_name, file_name_size - 4);
+                } else {
+                    dir_files[file_idx].file_name_no_ext = malloc(file_name_size);
+                    strcpy(dir_files[file_idx].file_name_no_ext, file_name);
+                }
 
                 // dir path
                 dir_files[file_idx].parent_dir_path = malloc(dir_path_size);
@@ -193,6 +207,7 @@ void load_files(Directory **dirs) {
             free(dir_files[i].file_path);
             free(dir_files[i].file_contents);
             free(dir_files[i].file_name);
+            free(dir_files[i].file_name_no_ext);
         }
 
         dir_idx++;
