@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include "files.h"
 #include "utils.h"
+#include "runna.h"
 
 const int TOTAL_EXERCISES_DIRS = 2; // TODO: Make this dynamic in the future
 
@@ -39,10 +40,16 @@ int main() {
             for (size_t e = 0; e < dirs[i]->file_ct; e++) {
                 // look for file diffs
                 bool file_diff = dirs[i]->files[e].file_diff;
-                char *file = dirs[i]->files[e].file_path;
+                char *file_path = dirs[i]->files[e].file_path;
+                FileType file_type = dirs[i]->files[e].file_type;
+
+                if (file_type == EXERCISE) {
+                    int res = exec_compile(file_path);
+                    printf("exec exit code: %i \n", res);
+                }
 
                 if (file_diff == true) {
-                    printf("file diff for: %s \n", file);
+                    printf("file diff for: %s \n", file_path);
                 }
             }
         }

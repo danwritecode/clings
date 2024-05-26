@@ -87,6 +87,7 @@ void add_dir(Directory **dirs, File *files, int file_ct, int dir_idx) {
 
     for (int i = 0; i < file_ct; i++) {
         dirs[dir_idx]->files[i].file_path = strdup(files[i].file_path);
+        dirs[dir_idx]->files[i].file_name = strdup(files[i].file_name);
         dirs[dir_idx]->files[i].parent_dir_path = strdup(files[i].parent_dir_path);
         dirs[dir_idx]->files[i].file_contents = strdup(files[i].file_contents);
         dirs[dir_idx]->files[i].file_type = files[i].file_type;
@@ -138,6 +139,7 @@ void load_files(Directory **dirs) {
                 char *file_contents = read_file_contents(full_path);
                 int dir_path_size = strlen(nested_path) + 1;
                 int file_path_size = strlen(full_path) + 1;
+                int file_name_size = strlen(file_name) + 1;
                 int file_contents_size = strlen(file_contents) + 1;
 
                 if (file_idx == 0) {
@@ -151,6 +153,10 @@ void load_files(Directory **dirs) {
                 // file path
                 dir_files[file_idx].file_path = malloc(file_path_size);
                 strcpy(dir_files[file_idx].file_path, full_path);
+
+                // file name
+                dir_files[file_idx].file_name = malloc(file_name_size);
+                strcpy(dir_files[file_idx].file_name, file_name);
 
                 // dir path
                 dir_files[file_idx].parent_dir_path = malloc(dir_path_size);
@@ -186,6 +192,7 @@ void load_files(Directory **dirs) {
             free(dir_files[i].parent_dir_path);
             free(dir_files[i].file_path);
             free(dir_files[i].file_contents);
+            free(dir_files[i].file_name);
         }
 
         dir_idx++;

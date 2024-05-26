@@ -11,6 +11,7 @@ typedef enum {
 
 typedef struct {
     char *file_path;
+    char *file_name;
     char *parent_dir_path;
     char *file_contents;
     bool file_diff;

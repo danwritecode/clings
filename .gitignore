@@ -1,5 +1,6 @@
 main
 /obj
 /bin
+*.bin
 *.o
 clings
