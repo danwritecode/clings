@@ -38,7 +38,6 @@ bool is_file_diff(Exercise *exercise);
 
 int main() {
     signal(SIGINT, sig_handler);
-    // exec_clear_bin();
 
     FileCollection **dirs = malloc(TOTAL_EXERCISES_DIRS * sizeof(FileCollection));
     if (dirs == NULL) {
@@ -114,7 +113,7 @@ void display_failure(Exercise *exercise, Failure *failure) {
         return;
     }
 
-    if (failure_type == COMPILATION) {
+    if (failure_type == RUNTIME) {
         exec_run_output(failed_file.file_name_no_ext);
         return;
     }
