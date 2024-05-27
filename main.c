@@ -51,7 +51,7 @@ int main() {
     }
 
     int index = 0;
-    int is_startup = true;
+    int rerun_all = true;
     Failure failure;
     failure.failure_mode = NONE;
     failure.failing_file = -1;
@@ -64,10 +64,11 @@ int main() {
             Exercise exercise = create_exercise(dirs[d]);
             bool file_diff = is_file_diff(&exercise);
 
-            if (is_startup == true) {
+            if (rerun_all == true) {
                 get_failing_exercise(&exercise, &failure);
                 if (failure.failure_mode != 2) {
                     display_failure(&exercise, &failure);
+                    rerun_all = false;
                     break;
                 }
             }
@@ -76,12 +77,14 @@ int main() {
                 get_failing_exercise(&exercise, &failure);
                 if (failure.failure_mode != 2) {
                     display_failure(&exercise, &failure);
+                    rerun_all = false;
                     break;
+                } else {
+                    rerun_all = true; // no issues found with file diff, need to now find next failing exercise
                 }
             }
         }
 
-        is_startup = false;
         index++;
     }
 
@@ -131,7 +134,7 @@ void get_failing_exercise(Exercise *exercise, Failure *failure) {
             puts("Failed to compile");
             failure->failure_mode = COMPILATION;
             failure->failing_file = e;
-            break;
+            return;
         }
 
         int run_res = exec_run(file_name_no_ext);
@@ -139,9 +142,12 @@ void get_failing_exercise(Exercise *exercise, Failure *failure) {
             puts("Failed to run");
             failure->failure_mode = RUNTIME;
             failure->failing_file = e;
-            break;
+            return;
         }
     }
+
+    failure->failure_mode = NONE;
+    failure->failing_file = -1;
 }
 
 bool is_file_diff(Exercise *exercise) {
