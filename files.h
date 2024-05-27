@@ -22,13 +22,13 @@ typedef struct {
 typedef struct {
     File *files;
     size_t file_ct;
-} Directory;
+} FileCollection;
 
 /// This assumes that any path does not contain any dividers
 /// *base_path = "../" or "./" or "/" if needed, otherwise pass ""
 char* build_file_path(char **paths, int size, char *base_path);
 char* read_file_contents(char *file_path);
-void add_dir(Directory **dirs, File *files, int file_ct, int dir_idx);
-void load_files(Directory **dirs);
+void add_dir(FileCollection **dirs, File *files, int file_ct, int dir_idx);
+void load_files(FileCollection **dirs);
 
 #endif

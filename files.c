@@ -75,8 +75,8 @@ char* read_file_contents(char *file_path) {
     return file_buff;
 }
 
-void add_dir(Directory **dirs, File *files, int file_ct, int dir_idx) {
-    dirs[dir_idx] = malloc(sizeof(Directory));
+void add_dir(FileCollection **dirs, File *files, int file_ct, int dir_idx) {
+    dirs[dir_idx] = malloc(sizeof(FileCollection));
     dirs[dir_idx]->files = malloc(sizeof(File) * file_ct);
 
     if (dirs[dir_idx]->files == NULL) {
@@ -99,7 +99,7 @@ void add_dir(Directory **dirs, File *files, int file_ct, int dir_idx) {
 }
 
 /// Loops through target directory path and loads files into Directory double pointer
-void load_files(Directory **dirs) {
+void load_files(FileCollection **dirs) {
     struct dirent *de;
     DIR *dir = opendir(DIR_PATH);
 
