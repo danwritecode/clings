@@ -32,6 +32,7 @@ static void sig_handler(int _)
 }
 
 void display_failure(Exercise *exercise, Failure *failure);
+void display_success();
 // returns 0 for no failure, 1 for failure
 void get_failing_exercise(Exercise *exercise, Failure *failure);
 bool is_file_diff(Exercise *exercise);
@@ -49,7 +50,6 @@ int main() {
         dirs[i] = NULL;
     }
 
-    int index = 0;
     int rerun_all = true;
     Failure failure;
     failure.failure_mode = NONE;
@@ -70,6 +70,13 @@ int main() {
                     rerun_all = false;
                     break;
                 }
+
+                // end of exercises, no failures
+                if (d == TOTAL_EXERCISES_DIRS -1) {
+                    exec_cmd("clear");
+                    display_success();
+                    rerun_all = false;
+                }
             }
 
             if (file_diff == true) {
@@ -83,8 +90,6 @@ int main() {
                 }
             }
         }
-
-        index++;
     }
 
     puts("stopped by ctrl+c");
@@ -164,4 +169,20 @@ bool is_file_diff(Exercise *exercise) {
     }
 
     return is_file_diff;
+}
+
+void display_success() {
+    char *msg = 
+        "      _ _                 \n"
+        "     | (_)                \n"
+        "  ___| |_ _ __   __ _ ___ \n"
+        " / __| | | '_ \\ / _` / __|\n"
+        "| (__| | | | | | (_| \\__ \\\n"
+        " \\___|_|_|_| |_|\\__, |___/\n"
+        "                 __/ |    \n"
+        "                |___/     \n";
+    
+    printf("%s\n", msg);
+    puts("\n");
+    puts("Congratulations on completing clings!");
 }
