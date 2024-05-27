@@ -67,6 +67,18 @@ int exec_compile_output(char *file_path, char *file_name_no_ext) {
     int file_name_len = strlen(file_name_no_ext);
     int buff_size = path_len + file_name_len + 45; // 35 is for gcc flags and other stuff
 
+    // check for BIN_PATH
+    DIR* dir = opendir(BIN_PATH);
+    if (dir) {
+        // BIN_PATH already exists
+        closedir(dir);
+    } else if (ENOENT == errno) {
+        // need to make BIN_PATH
+        mkdir(BIN_PATH, 0700);
+    } else {
+        perror("probing BIN_PATH failed");
+    }
+
     // create snprintf buffer
     char *compile_cmd = malloc(buff_size);
     // snprintf(compile_cmd, buff_size, "gcc %s -o %s/%s -Wall -Wextra -Werror", file_path, BIN_PATH ,file_name_no_ext);
