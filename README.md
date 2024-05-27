@@ -13,6 +13,8 @@
 # What is clings?
 clings is a C version of the popular program "rustlings" made for the Rust programming language.
 
+The purpose of this program is to take you from a total C noob, to somewhere beyond beginner.
+
 # Dependencies
 1. gcc
 2. make
@@ -35,3 +37,6 @@ make
 ./clings
 ```
 6. Start at exercise_01 and continue from there
+
+# Contributions
+I would love to receive contributions for new exercises to be added to clings. This course is designed to take someone from zero understanding of C to something a bit past beginner. 
