@@ -1,5 +1,5 @@
-#ifndef FILES
-#define FILES
+#ifndef FILES_H
+#define FILES_H
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -30,5 +30,6 @@ char* build_file_path(char **paths, int size, char *base_path);
 char* read_file_contents(char *file_path);
 void add_dir(FileCollection **dirs, File *files, int file_ct, int dir_idx);
 void load_files(FileCollection **dirs);
+int alphasort(const struct dirent **a, const struct dirent **b);
 
 #endif

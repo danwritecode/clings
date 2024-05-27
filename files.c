@@ -98,19 +98,25 @@ void add_dir(FileCollection **dirs, File *files, int file_ct, int dir_idx) {
     dirs[dir_idx]->file_ct = file_ct;
 }
 
+int alphasort(const struct dirent **a, const struct dirent **b) {
+    return strcasecmp((*a)->d_name, (*b)->d_name);
+}
+
 /// Loops through target directory path and loads files into Directory double pointer
 void load_files(FileCollection **dirs) {
-    struct dirent *de;
-    DIR *dir = opendir(DIR_PATH);
+    struct dirent **namelist;
+    int n;
 
-    if (dir == NULL) {
+    n = scandir(DIR_PATH, &namelist, NULL, alphasort);
+    if (n < 0) {
         perror("Could not open directory");
         exit(1);
     }
 
     int dir_idx = 0;
 
-    while ((de = readdir(dir)) != NULL) {
+    for (int i = 0; i < n; i++) {
+        struct dirent *de = namelist[i];
         int file_type = de->d_type;
 
         if (file_type != DIR_TYPE_CODE) continue;
@@ -162,11 +168,13 @@ void load_files(FileCollection **dirs) {
                 strcpy(dir_files[file_idx].file_name, file_name);
 
                 if (file_type == EXERCISE) {
-                    dir_files[file_idx].file_name_no_ext = malloc(file_name_size - 3);
+                    dir_files[file_idx].file_name_no_ext = malloc(file_name_size - 2);
                     strncpy(dir_files[file_idx].file_name_no_ext, file_name, file_name_size - 3);
+                    dir_files[file_idx].file_name_no_ext[file_name_size - 3] = '\0';
                 } else if (file_type == README) {
-                    dir_files[file_idx].file_name_no_ext = malloc(file_name_size - 4);
+                    dir_files[file_idx].file_name_no_ext = malloc(file_name_size - 2);
                     strncpy(dir_files[file_idx].file_name_no_ext, file_name, file_name_size - 4);
+                    dir_files[file_idx].file_name_no_ext[file_name_size - 4] = '\0';
                 } else {
                     dir_files[file_idx].file_name_no_ext = malloc(file_name_size);
                     strcpy(dir_files[file_idx].file_name_no_ext, file_name);
@@ -215,5 +223,5 @@ void load_files(FileCollection **dirs) {
         free(nested_path);
     }
 
-    closedir(dir);
+    free(namelist);
 }

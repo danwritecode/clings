@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 
-SRCS = main.c files.c utils.c runna.c
+SRCS = main.c files.c utils.c runna.c exercise.c
 OBJS = $(SRCS:.c=.o)
 
 TARGET = clings

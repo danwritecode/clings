@@ -90,6 +90,7 @@ int exec_compile(char *file_path, char *file_name_no_ext) {
     char *compile_cmd = malloc(buff_size);
     snprintf(compile_cmd, buff_size, "gcc %s -o %s/%s -Wall -Wextra -Werror", file_path, BIN_PATH ,file_name_no_ext);
 
+	printf("compile statement: %s \n", compile_cmd);
     int res_code = exec_cmd(compile_cmd);
 
 	free(compile_cmd);
@@ -103,5 +104,14 @@ int exec_run(char *file_name_no_ext) {
     int res_code = exec_cmd(file_path);
 
 	free(file_path);
+	return res_code;
+}
+
+int exec_clear_bin() {
+	char *command = malloc(14); // add 5 for binary path
+	snprintf(command, 14, "rm -r %s/*", BIN_PATH);
+    int res_code = exec_cmd(command);
+
+	free(command);
 	return res_code;
 }
