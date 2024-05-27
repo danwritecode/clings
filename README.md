@@ -40,3 +40,6 @@ make
 
 # Contributions
 I would love to receive contributions for new exercises to be added to clings. This course is designed to take someone from zero understanding of C to something a bit past beginner. 
+
+### Note
+I did this as a project to help me learn C. The source code is far from perfect. I would gladly accept any code reviews and will work to fix any issues that are submitted.
