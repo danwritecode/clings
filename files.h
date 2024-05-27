@@ -1,6 +1,7 @@
 #ifndef FILES_H
 #define FILES_H
 
+#include <dirent.h>
 #include <stdbool.h>
 #include <stdio.h>
 
