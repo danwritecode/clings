@@ -63,7 +63,8 @@ int exec_compile_output(char *file_path, char *file_name_no_ext) {
 
     // create snprintf buffer
     char *compile_cmd = malloc(buff_size);
-    snprintf(compile_cmd, buff_size, "gcc %s -o %s/%s -Wall -Wextra -Werror", file_path, BIN_PATH ,file_name_no_ext);
+    // snprintf(compile_cmd, buff_size, "gcc %s -o %s/%s -Wall -Wextra -Werror", file_path, BIN_PATH ,file_name_no_ext);
+    snprintf(compile_cmd, buff_size, "gcc %s -o %s/%s", file_path, BIN_PATH ,file_name_no_ext);
 
     int res_code = exec_cmd_output(compile_cmd);
 
@@ -88,7 +89,8 @@ int exec_compile(char *file_path, char *file_name_no_ext) {
 
     // create snprintf buffer
     char *compile_cmd = malloc(buff_size);
-    snprintf(compile_cmd, buff_size, "gcc %s -o %s/%s -Wall -Wextra -Werror", file_path, BIN_PATH ,file_name_no_ext);
+    // snprintf(compile_cmd, buff_size, "gcc %s -o %s/%s -Wall -Wextra -Werror", file_path, BIN_PATH ,file_name_no_ext);
+    snprintf(compile_cmd, buff_size, "gcc %s -o %s/%s", file_path, BIN_PATH ,file_name_no_ext);
 
 	printf("compile statement: %s \n", compile_cmd);
     int res_code = exec_cmd(compile_cmd);

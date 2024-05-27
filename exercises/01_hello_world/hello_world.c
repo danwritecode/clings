@@ -2,7 +2,6 @@
 
 int main()
 {
-    printf("hello world");
-    int bar;
+    printf("hello world")
     return 0;
 }
