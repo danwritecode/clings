@@ -1,3 +1,4 @@
+```
       _ _                 
      | (_)                
   ___| |_ _ __   __ _ ___ 
@@ -7,6 +8,7 @@
                  __/ |    
                 |___/     
 
+```
 
 # What is clings?
 clings is a C version of the popular program "rustlings" made for the Rust programming language.
