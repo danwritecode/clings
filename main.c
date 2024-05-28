@@ -12,6 +12,7 @@
 #include "runna.h"
 
 const int TOTAL_EXERCISES_DIRS = 2; // TODO: Make this dynamic in the future
+static volatile sig_atomic_t keep_running = 1;
 
 typedef enum {
     RUNTIME,
@@ -24,18 +25,12 @@ typedef struct {
     int failing_file;
 } Failure;
 
-static volatile sig_atomic_t keep_running = 1;
-static void sig_handler(int _)
-{
-    (void)_;
-    keep_running = 0;
-}
-
 void display_failure(Exercise *exercise, Failure *failure);
 void display_success();
-// returns 0 for no failure, 1 for failure
 void get_failing_exercise(Exercise *exercise, Failure *failure);
 bool is_file_diff(Exercise *exercise);
+static void sig_handler(int _);
+
 
 int main() {
     signal(SIGINT, sig_handler);
@@ -92,9 +87,6 @@ int main() {
         }
     }
 
-    puts("stopped by ctrl+c");
-
-    // cleanup 
     for (int i = 0; i < TOTAL_EXERCISES_DIRS; i++) {
         for (size_t e = 0; e < dirs[i]->file_ct; e++) {
             free(dirs[i]->files[e].file_path);
@@ -135,7 +127,6 @@ void get_failing_exercise(Exercise *exercise, Failure *failure) {
 
         int comp_res = exec_compile(file_path, file_name_no_ext);
         if (comp_res != 0) {
-            puts("Failed to compile");
             failure->failure_mode = COMPILATION;
             failure->failing_file = e;
             return;
@@ -143,7 +134,6 @@ void get_failing_exercise(Exercise *exercise, Failure *failure) {
 
         int run_res = exec_run(file_name_no_ext);
         if (run_res != 0) {
-            puts("Failed to run");
             failure->failure_mode = RUNTIME;
             failure->failing_file = e;
             return;
@@ -169,6 +159,11 @@ bool is_file_diff(Exercise *exercise) {
     }
 
     return is_file_diff;
+}
+
+static void sig_handler(int _) {
+    (void)_;
+    keep_running = 0;
 }
 
 void display_success() {
