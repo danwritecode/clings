@@ -41,5 +41,13 @@ make
 # Contributions
 I would love to receive contributions for new exercises to be added to clings. This course is designed to take someone from zero understanding of C to something a bit past beginner. 
 
+### Exercise Directory structure
+1. README.md file is required
+2. N number of ".c" exercises can be included, the program will work through them dynamically
+3. At the top of any exercise, provide vague explanation of the objective of the exercise without giving the answer
+
+# To do
+1. Rustlings has the concept of asking for a hint, will eventually look to integrate this
+
 ### Note
 I did this as a project to help me learn C. The source code is far from perfect. I would gladly accept any code reviews and will work to fix any issues that are submitted.
