@@ -74,6 +74,19 @@ char* read_file_contents(char *file_path) {
     return file_buff;
 }
 
+bool is_marked_incompleted(char *file_contents, int file_contents_size) {
+    char x1 = 0xE2, x2 = 0x9D, x3 = 0x8C; // UTF-8 encoding of '❌'
+
+    for (int i = 0; i < file_contents_size - 3; i++) {
+        char c1 = file_contents[i];
+        char c2 = file_contents[i + 1];
+        char c3 = file_contents[i + 2];
+
+        if (c1 == x1 && c2 == x2 && c3 == x3) return true;
+    }
+
+    return false;
+}
 
 void add_dir(FileCollection **dirs, File *files, int file_ct, int dir_idx) {
     dirs[dir_idx] = malloc(sizeof(FileCollection));
@@ -92,6 +105,7 @@ void add_dir(FileCollection **dirs, File *files, int file_ct, int dir_idx) {
         dirs[dir_idx]->files[i].parent_dir_path = strdup(files[i].parent_dir_path);
         dirs[dir_idx]->files[i].file_contents = strdup(files[i].file_contents);
         dirs[dir_idx]->files[i].file_type = files[i].file_type;
+        dirs[dir_idx]->files[i].marked_incomplete = files[i].marked_incomplete;
         dirs[dir_idx]->files[i].file_diff = files[i].file_diff;
     }
 
@@ -104,8 +118,8 @@ int alphasort(const struct dirent **a, const struct dirent **b) {
 }
 
 
-/// Loops through target directory path and loads files into Directory double pointer
-void load_files(FileCollection **dirs) {
+/// Loops through target directory path and loads files into Directory double pointer and returns total exercise files
+int load_files(FileCollection **dirs) {
     struct dirent **namelist;
     int n;
 
@@ -116,6 +130,7 @@ void load_files(FileCollection **dirs) {
     }
 
     int dir_idx = 0;
+    int total_exercise_file_ct = 0;
 
     for (int i = 0; i < n; i++) {
         struct dirent *de = namelist[i];
@@ -137,6 +152,7 @@ void load_files(FileCollection **dirs) {
         }
 
         int file_idx = 0;
+        int exercise_file_ct = 0;
         File *dir_files;
 
         while ((nde = readdir(ndir)) != NULL) {
@@ -170,16 +186,29 @@ void load_files(FileCollection **dirs) {
                 strcpy(dir_files[file_idx].file_name, file_name);
 
                 if (file_type == EXERCISE) {
+                    // create file name no extension
                     dir_files[file_idx].file_name_no_ext = malloc(file_name_size - 2);
                     strncpy(dir_files[file_idx].file_name_no_ext, file_name, file_name_size - 3);
                     dir_files[file_idx].file_name_no_ext[file_name_size - 3] = '\0';
+
+                    // check to see if user has marked exercise as completed
+                    bool marked_complete = is_marked_incompleted(file_contents, file_contents_size);
+                    dir_files[file_idx].marked_incomplete = marked_complete;
+
+                    exercise_file_ct++;
                 } else if (file_type == README) {
                     dir_files[file_idx].file_name_no_ext = malloc(file_name_size - 2);
                     strncpy(dir_files[file_idx].file_name_no_ext, file_name, file_name_size - 4);
                     dir_files[file_idx].file_name_no_ext[file_name_size - 4] = '\0';
+
+                    // set completeness flag
+                    dir_files[file_idx].marked_incomplete = false;
                 } else {
                     dir_files[file_idx].file_name_no_ext = malloc(file_name_size);
                     strcpy(dir_files[file_idx].file_name_no_ext, file_name);
+
+                    // set completeness flag
+                    dir_files[file_idx].marked_incomplete = false;
                 }
 
                 // dir path
@@ -210,6 +239,7 @@ void load_files(FileCollection **dirs) {
         }
 
         add_dir(dirs, dir_files, file_idx, dir_idx);
+        total_exercise_file_ct += exercise_file_ct;
 
         // free dir_files
         for (int i = 0; i < file_idx; i++) {
@@ -226,4 +256,6 @@ void load_files(FileCollection **dirs) {
     }
 
     free(namelist);
+
+    return total_exercise_file_ct;
 }
