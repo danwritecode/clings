@@ -11,4 +11,3 @@ For each exercise, your mission is simple: fix the errors you encounter.
 Once all errors have been fixed, the program will automatically move you to the next exercise.
 
 Good luck and have fun!
-----------------------------------------------------------------------
