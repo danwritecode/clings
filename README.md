@@ -41,7 +41,19 @@ make
 6. Start at exercise_01 and continue from there
 
 # Contributions
-I would love to receive contributions for new exercises to be added to clings. This course is designed to take someone from zero understanding of C to something a bit past beginner. 
+The best way to contribute is by helping me create new exercises. I have created an issue for each exercise that needs to be created. The issues follow the flow of "The C Programming Language" book.
+
+To get started, find an exercise you want to work on and create a PR for it. Then refer to The C Programming Language for the specific chapter references in the issue title.
+
+### Exercise Creation Instructions:
+1. Create a new directory for the file based on the exercise number. The title should be something like: 'variables_02'
+2. Create a readme with an explanation for the user. This should teach them what they need to know without giving the answer.
+3. Create 1 or more ".c" exercise files. The file(s) should either fail to compile, or run, or both.
+    - The exercise files should be interactive, they should lead the user to learning the things they need to learn.
+    - If multiple exercises are needed to have then build up knowledge, then this is fine.
+
+Feel free to ask questions if you need more details.
+
 
 ### Exercise Directory structure
 1. README.md file is required
