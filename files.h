@@ -31,7 +31,7 @@ typedef struct {
 char* build_file_path(char **paths, int size, char *base_path);
 char* read_file_contents(char *file_path);
 void add_dir(FileCollection **dirs, File *files, int file_ct, int dir_idx);
-void load_files(FileCollection **dirs);
+int load_files(FileCollection **dirs);
 bool is_marked_incomplete(char *file_contents, int file_contents_size);
 int alphasort(const struct dirent **a, const struct dirent **b);
 

@@ -118,8 +118,8 @@ int alphasort(const struct dirent **a, const struct dirent **b) {
 }
 
 
-/// Loops through target directory path and loads files into Directory double pointer
-void load_files(FileCollection **dirs) {
+/// Loops through target directory path and loads files into Directory double pointer and returns total exercise files
+int load_files(FileCollection **dirs) {
     struct dirent **namelist;
     int n;
 
@@ -130,6 +130,7 @@ void load_files(FileCollection **dirs) {
     }
 
     int dir_idx = 0;
+    int total_exercise_file_ct = 0;
 
     for (int i = 0; i < n; i++) {
         struct dirent *de = namelist[i];
@@ -151,6 +152,7 @@ void load_files(FileCollection **dirs) {
         }
 
         int file_idx = 0;
+        int exercise_file_ct = 0;
         File *dir_files;
 
         while ((nde = readdir(ndir)) != NULL) {
@@ -192,6 +194,8 @@ void load_files(FileCollection **dirs) {
                     // check to see if user has marked exercise as completed
                     bool marked_complete = is_marked_incompleted(file_contents, file_contents_size);
                     dir_files[file_idx].marked_incomplete = marked_complete;
+
+                    exercise_file_ct++;
                 } else if (file_type == README) {
                     dir_files[file_idx].file_name_no_ext = malloc(file_name_size - 2);
                     strncpy(dir_files[file_idx].file_name_no_ext, file_name, file_name_size - 4);
@@ -235,6 +239,7 @@ void load_files(FileCollection **dirs) {
         }
 
         add_dir(dirs, dir_files, file_idx, dir_idx);
+        total_exercise_file_ct += exercise_file_ct;
 
         // free dir_files
         for (int i = 0; i < file_idx; i++) {
@@ -251,4 +256,6 @@ void load_files(FileCollection **dirs) {
     }
 
     free(namelist);
+
+    return total_exercise_file_ct;
 }
