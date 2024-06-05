@@ -239,11 +239,20 @@ void display_failure(Exercise *exercise, ExecutionState *exercise_state) {
 }
 
 void display_marked_incomplete(Exercise *exercise, ExecutionState *exercise_state) {
+    File failed_file = exercise->exercise_files->files[exercise_state->failing_file];
+
     char msg[] = "\033[1;34m1 | \033[0m// ❌ I AM NOT DONE \n"
                  "\033[1;34m2 | \033[0m\n"
                  "\033[1;34m3 | \033[0m\n";
 
     printf("✅ \033[1;32mYou've completed exercise: %s \033[0m\n", exercise->exercise_files->files[exercise_state->failing_file].file_path);
+    puts("");
+    printf("😎 The code is compiling! 😎 \n");
+    puts("");
+    printf("Output: \n");
+    puts("==========================================");
+    exec_run_output(failed_file.file_name_no_ext);
+    puts("==========================================");
     puts("");
     puts("You can keep working on it for fun,\nor delete the commented line below in the exercise file to proceed to the next exercise. \n");
     printf("%s\n", msg);
