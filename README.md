@@ -46,7 +46,7 @@ The best way to contribute is by helping me create new exercises. I have created
 To get started, find an exercise you want to work on and create a PR for it. Then refer to The C Programming Language for the specific chapter references in the issue title.
 
 ### Exercise Creation Instructions:
-1. Create a new directory for the file based on the exercise number. The title should be something like: 'variables_02'
+1. Create a new directory for the exercise based on the name provided in the issue.
 2. Create a readme with an explanation for the user. This should teach them what they need to know without giving the answer.
 3. Create 1 or more ".c" exercise files. The file(s) should either fail to compile, or run, or both.
     - The exercise files should be interactive, they should lead the user to learning the things they need to learn.
