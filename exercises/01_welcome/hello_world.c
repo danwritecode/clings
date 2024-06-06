@@ -11,6 +11,8 @@
 // Once there are no errors and you're ready to move on, delete the "I AM NOT DONE" line.
 
 
+// ❌ I AM NOT DONE
+
 
 #include <stdio.h>
 
@@ -30,11 +32,13 @@ int main()
     printf("%s\n", msg);
 
     // Missing something here? What does the compiler say?
-    printf("Welcome to clings! \n");
+    printf("Welcome to clings! \n")
 
     // This is a segmentation fault
     // It's added to demonstrate a runtime failure
     // For now, just delete these lines to see a successful exercise completion
+    int *ptr = NULL;
+    *ptr = 42;
 
     return 0;
 }

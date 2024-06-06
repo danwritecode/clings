@@ -253,6 +253,7 @@ int load_files(FileCollection **dirs) {
 
         dir_idx++;
         free(nested_path);
+        free(nmlist_nested);
     }
 
     free(nmlist);
