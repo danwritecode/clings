@@ -259,7 +259,8 @@ void display_marked_incomplete(Exercise *exercise, ExecutionState *exercise_stat
 }
 
 void display_progress(int current_exercise, int total_exercises) {
-    float progress = (float)(current_exercise + 1) / total_exercises;
+    int current_exercise_non_zero = current_exercise == 0 ? 1:current_exercise;
+    float progress = (float)current_exercise_non_zero / total_exercises;
     char msg[300] = "";
 
     for (int ci = 0; ci < 50; ci++) {
@@ -292,9 +293,12 @@ void display_success() {
 }
 
 void display_debug(Exercise *exercise) {
-    File exercise_file = exercise->exercise_files->files[0];
-    printf("Exercise: %s | File type: %i | marked incomplete: %i | file diff "
-         "found: %i \n",
-         exercise_file.file_name, exercise_file.file_type,
-         exercise_file.marked_incomplete, exercise_file.file_diff);
+    for (size_t fi = 0; fi < exercise->exercise_files->file_ct; fi++) {
+        File exercise_file = exercise->exercise_files->files[fi];
+
+        printf("Exercise: %s | File type: %i | marked incomplete: %i | file diff "
+             "found: %i \n",
+             exercise_file.file_name, exercise_file.file_type,
+             exercise_file.marked_incomplete, exercise_file.file_diff);
+    }
 }

@@ -120,11 +120,10 @@ int alphasort(const struct dirent **a, const struct dirent **b) {
 
 /// Loops through target directory path and loads files into Directory double pointer and returns total exercise files
 int load_files(FileCollection **dirs) {
-    struct dirent **namelist;
-    int n;
+    struct dirent **nmlist;
+    int ex_dirs_ct = scandir(DIR_PATH, &nmlist, NULL, alphasort);
 
-    n = scandir(DIR_PATH, &namelist, NULL, alphasort);
-    if (n < 0) {
+    if (ex_dirs_ct < 0) {
         perror("Could not open directory");
         exit(1);
     }
@@ -132,8 +131,8 @@ int load_files(FileCollection **dirs) {
     int dir_idx = 0;
     int total_exercise_file_ct = 0;
 
-    for (int i = 0; i < n; i++) {
-        struct dirent *de = namelist[i];
+    for (int di = 0; di < ex_dirs_ct; di++) {
+        struct dirent *de = nmlist[di];
         int file_type = de->d_type;
 
         if (file_type != DIR_TYPE_CODE) continue;
@@ -143,21 +142,23 @@ int load_files(FileCollection **dirs) {
         char *paths[] = { (char *)DIR_PATH, de->d_name };
         char *nested_path = build_file_path(paths, 2, "");
 
-        struct dirent *nde;
-        DIR *ndir = opendir(nested_path);
+        struct dirent **nmlist_nested;
+        int ex_dirs_nested_ct = scandir(nested_path, &nmlist_nested, NULL, alphasort);
 
-        if (ndir == NULL) {
-            perror("Could not open nested directory");
+        if (ex_dirs_nested_ct < 0) {
+            perror("Could not open directory");
             exit(1);
         }
 
-        int file_idx = 0;
+        int file_idx = 0; // need this because not everything in a directory is an exercise file
         int exercise_file_ct = 0;
         File *dir_files;
 
-        while ((nde = readdir(ndir)) != NULL) {
+        for (int ndi = 0; ndi < ex_dirs_nested_ct; ndi++) {
+            struct dirent *nde = nmlist_nested[ndi];
             int file_type = nde->d_type;
             char *file_name = nde->d_name;
+
             if (file_type == FILE_TYPE_CODE) {
                 char *paths[] = { (char *)DIR_PATH, de->d_name, nde->d_name};
                 char *full_path = build_file_path(paths, 3, "");
@@ -251,11 +252,11 @@ int load_files(FileCollection **dirs) {
         }
 
         dir_idx++;
-        closedir(ndir);
         free(nested_path);
+        free(nmlist_nested);
     }
 
-    free(namelist);
+    free(nmlist);
 
     return total_exercise_file_ct;
 }
