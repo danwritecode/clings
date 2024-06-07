@@ -8,6 +8,9 @@ TARGET = clings
 
 all: $(TARGET)
 
+debug: CFLAGS += -DDEBUG
+debug: $(TARGET)
+
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
 
@@ -17,5 +20,5 @@ $(TARGET): $(OBJS)
 clean:
 	rm -f $(OBJS) $(TARGET)
 
-.PHONY: all clean
+.PHONY: all clean debug
 

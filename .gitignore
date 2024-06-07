@@ -4,3 +4,4 @@ main
 *.bin
 *.o
 clings
+clings_debug
