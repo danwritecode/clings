@@ -1,8 +1,8 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -I./include
 
-SRCS = main.c files.c utils.c runna.c exercise.c
-OBJS = $(SRCS:.c=.o)
+SRCS = src/main.c src/files.c src/utils.c src/runna.c src/exercise.c
+OBJS = $(SRCS:src/%.c=obj/%.o)
 
 TARGET = clings
 
@@ -14,11 +14,13 @@ debug: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
 
-%.o: %.c
+obj/%.o: src/%.c
+	@mkdir -p obj
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OBJS) $(TARGET)
+	rm -rf obj
 
 .PHONY: all clean debug
 
