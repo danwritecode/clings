@@ -5,3 +5,5 @@ main
 *.o
 clings
 clings_debug
+.clangd
+compile_commands.json
