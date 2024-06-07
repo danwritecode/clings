@@ -11,7 +11,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-const bool DEBUG_MODE = false;
 const int TOTAL_EXERCISES_DIRS = 2; // TODO: Make this dynamic in the future
 static volatile sig_atomic_t keep_running = 1;
 
@@ -74,10 +73,10 @@ int main() {
             Exercise exercise = create_exercise(dirs[d]);
             bool file_diff = is_file_diff(&exercise);
 
-            if (DEBUG_MODE == true) {
+            #ifdef DEBUG
                 display_debug(&exercise);
                 continue;
-            }
+            #endif
 
             if (rerun_all == true) {
                 exec_exercise(&exercise, &exercise_state);
