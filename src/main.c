@@ -69,6 +69,16 @@ int main(int argc, char *argv[]) {
     while (keep_running) {
         delay(1);
 
+        FileCollection **dirs = malloc(TOTAL_EXERCISES_DIRS * sizeof(FileCollection));
+        if (dirs == NULL) {
+            perror("Failed allocate memory for dirs");
+            exit(1);
+        }
+
+        for (int i = 0; i < TOTAL_EXERCISES_DIRS; i++) {
+            dirs[i] = NULL;
+        }
+
         int exercise_file_ct = load_files(dirs);
         exercise_state.total_files = exercise_file_ct;
 
@@ -123,16 +133,20 @@ int main(int argc, char *argv[]) {
                 }
             }
         }
-    }
 
-    for (int i = 0; i < TOTAL_EXERCISES_DIRS; i++) {
-        for (size_t e = 0; e < dirs[i]->file_ct; e++) {
-            free(dirs[i]->files[e].file_path);
-            free(dirs[i]->files[e].file_contents);
+        for (int i = 0; i < TOTAL_EXERCISES_DIRS; i++) {
+            for (size_t e = 0; e < dirs[i]->file_ct; e++) {
+                free(dirs[i]->files[e].file_path);
+                free(dirs[i]->files[e].file_contents);
+                free(dirs[i]->files[e].file_name);
+                free(dirs[i]->files[e].file_name_no_ext);
+                free(dirs[i]->files[e].parent_dir_path);
+            }
         }
+
+        free(dirs);
     }
 
-    free(dirs);
     return 0;
 }
 
