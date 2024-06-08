@@ -25,16 +25,6 @@ static void sig_handler(int _);
 int main() {
     signal(SIGINT, sig_handler);
 
-    FileCollection **dirs = malloc(TOTAL_EXERCISES_DIRS * sizeof(FileCollection));
-    if (dirs == NULL) {
-        perror("Failed allocate memory for dirs");
-        exit(1);
-    }
-
-    for (int i = 0; i < TOTAL_EXERCISES_DIRS; i++) {
-        dirs[i] = NULL;
-    }
-
     int rerun_all = true;
     ExecutionState exercise_state;
     exercise_state.failure_mode = NONE;
@@ -43,6 +33,16 @@ int main() {
 
     while (keep_running) {
         delay(1);
+
+        FileCollection **dirs = malloc(TOTAL_EXERCISES_DIRS * sizeof(FileCollection));
+        if (dirs == NULL) {
+            perror("Failed allocate memory for dirs");
+            exit(1);
+        }
+
+        for (int i = 0; i < TOTAL_EXERCISES_DIRS; i++) {
+            dirs[i] = NULL;
+        }
 
         int exercise_file_ct = load_files(dirs);
         exercise_state.total_files = exercise_file_ct;
@@ -98,16 +98,20 @@ int main() {
                 }
             }
         }
-    }
 
-    for (int i = 0; i < TOTAL_EXERCISES_DIRS; i++) {
-        for (size_t e = 0; e < dirs[i]->file_ct; e++) {
-            free(dirs[i]->files[e].file_path);
-            free(dirs[i]->files[e].file_contents);
+        for (int i = 0; i < TOTAL_EXERCISES_DIRS; i++) {
+            for (size_t e = 0; e < dirs[i]->file_ct; e++) {
+                free(dirs[i]->files[e].file_path);
+                free(dirs[i]->files[e].file_contents);
+                free(dirs[i]->files[e].file_name);
+                free(dirs[i]->files[e].file_name_no_ext);
+                free(dirs[i]->files[e].parent_dir_path);
+            }
         }
+
+        free(dirs);
     }
 
-    free(dirs);
     return 0;
 }
 
