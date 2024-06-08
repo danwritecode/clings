@@ -2,7 +2,6 @@
 #define EXERCISE_H
 
 #include "files.h"
-#include <signal.h>
 
 
 typedef struct {
