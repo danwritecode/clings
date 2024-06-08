@@ -9,7 +9,7 @@ typedef struct {
     FileCollection* exercise_files;
 } Exercise;
 
-Exercise create_exercise(FileCollection *files);
+Exercise *create_exercise(FileCollection *files);
 char* get_readme(FileCollection *dir);
 FileCollection* get_exercises(FileCollection *dir);
 
