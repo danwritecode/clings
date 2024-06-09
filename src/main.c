@@ -132,16 +132,22 @@ int main(int argc, char *argv[]) {
                     rerun_all = true;
                 }
             }
+
+            free(exercise.exercise_files->files);
+            free(exercise.exercise_files);
         }
 
-        for (int i = 0; i < TOTAL_EXERCISES_DIRS; i++) {
-            for (size_t e = 0; e < dirs[i]->file_ct; e++) {
-                free(dirs[i]->files[e].file_path);
-                free(dirs[i]->files[e].file_contents);
-                free(dirs[i]->files[e].file_name);
-                free(dirs[i]->files[e].file_name_no_ext);
-                free(dirs[i]->files[e].parent_dir_path);
+        for (int di = 0; di < TOTAL_EXERCISES_DIRS; di++) {
+            for (size_t e = 0; e < dirs[di]->file_ct; e++) {
+                free(dirs[di]->files[e].file_path);
+                free(dirs[di]->files[e].file_contents);
+                free(dirs[di]->files[e].file_name);
+                free(dirs[di]->files[e].file_name_no_ext);
+                free(dirs[di]->files[e].parent_dir_path);
             }
+
+            free(dirs[di]->files);
+            free(dirs[di]);
         }
 
         free(dirs);
