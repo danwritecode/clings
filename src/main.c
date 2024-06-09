@@ -149,6 +149,9 @@ int main(int argc, char *argv[]) {
             free(exercise->exercise_files);
             free(exercise);
             }
+
+            free(exercise.exercise_files->files);
+            free(exercise.exercise_files);
         }
 
     for (int di = 0; di < TOTAL_EXERCISES_DIRS; di++) {
