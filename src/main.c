@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
 
     opterr = 0;
 
-    while ((c = getopt(argc, argv, "s::")) != -1) {
+    while ((c = getopt(argc, argv, "s:")) != -1) {
         switch (c) {
             case 's':
                 start_at = atoi(optarg);
@@ -199,6 +199,6 @@ static void sig_handler(int _) {
 
 void print_usage() {
     printf("Usage:\n\n"
-        "-sN\tStart at exercise N (between 1 and %d)"
+        "-s N\tStart at exercise N (between 1 and %d)"
         "\n", TOTAL_EXERCISES_DIRS);
 }
