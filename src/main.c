@@ -21,9 +21,34 @@ FailureMode find_failure_mode(char *file_path, char *file_name_no_ext);
 bool is_file_diff(Exercise *exercise);
 
 static void sig_handler(int _);
+void print_usage();
 
-int main() {
+int main(int argc, char *argv[]) {
     signal(SIGINT, sig_handler);
+
+    int start_at = 1;
+    int c;
+
+    opterr = 0;
+
+    while ((c = getopt(argc, argv, "s:")) != -1) {
+        switch (c) {
+            case 's':
+                start_at = atoi(optarg);
+
+                if (start_at > TOTAL_EXERCISES_DIRS || start_at < 1) {
+                    printf("error: cannot start at %d (max. exercises: %d)\n", start_at, TOTAL_EXERCISES_DIRS);
+                    return EXIT_FAILURE;
+                }
+                printf("Starting at exercise %d ...\n", start_at);
+
+                delay(2);
+                break;
+            default:
+                print_usage();
+                return EXIT_SUCCESS;
+        }
+    }
 
     FileCollection **dirs = malloc(TOTAL_EXERCISES_DIRS * sizeof(FileCollection));
     if (dirs == NULL) {
@@ -47,7 +72,7 @@ int main() {
         int exercise_file_ct = load_files(dirs);
         exercise_state.total_files = exercise_file_ct;
 
-        for (int d = 0; d < TOTAL_EXERCISES_DIRS; d++) {
+        for (int d = (start_at - 1); d < TOTAL_EXERCISES_DIRS; d++) {
             Exercise exercise = create_exercise(dirs[d]);
             bool file_diff = is_file_diff(&exercise);
 
@@ -172,3 +197,8 @@ static void sig_handler(int _) {
     keep_running = 0;
 }
 
+void print_usage() {
+    printf("Usage:\n\n"
+        "-s N\tStart at exercise N (between 1 and %d)"
+        "\n", TOTAL_EXERCISES_DIRS);
+}
