@@ -82,8 +82,8 @@ int main(int argc, char *argv[]) {
         exercise_state.total_files = exercise_file_ct;
 
         for (int d = (start_at - 1); d < TOTAL_EXERCISES_DIRS; d++) {
-            Exercise exercise = create_exercise(dirs[d]);
-            bool file_diff = is_file_diff(&exercise);
+            Exercise *exercise = create_exercise(dirs[d]);
+            bool file_diff = is_file_diff(exercise);
 
             #ifdef DEBUG
                 display_debug(&exercise);
@@ -91,40 +91,40 @@ int main(int argc, char *argv[]) {
             #endif
 
             if (rerun_all == true) {
-                exec_exercise(&exercise, &exercise_state);
+                exec_exercise(exercise, &exercise_state);
 
                 if (exercise_state.failure_mode != NONE) {
-                    display(&exercise, &exercise_state, FAILURE);
+                    display(exercise, &exercise_state, FAILURE);
                     rerun_all = false;
-                    break;
+                    goto clean_exercise;
                 }
 
                 if (exercise_state.failure_mode == NONE && exercise_state.marked_incomplete == true) {
-                    display(&exercise, &exercise_state, MARKED_INCOMPLETE);
+                    display(exercise, &exercise_state, MARKED_INCOMPLETE);
                     rerun_all = false;
-                    break;
+                    goto clean_exercise;
                 }
 
                 // end of exercises, no failures
                 if (d == TOTAL_EXERCISES_DIRS - 1) {
-                    display(&exercise, &exercise_state, COMPLETE);
+                    display(exercise, &exercise_state, COMPLETE);
                     rerun_all = false;
                 }
             }
 
             if (file_diff == true) {
-                exec_exercise(&exercise, &exercise_state);
+                exec_exercise(exercise, &exercise_state);
 
                 if (exercise_state.failure_mode != NONE) {
-                    display(&exercise, &exercise_state, FAILURE);
+                    display(exercise, &exercise_state, FAILURE);
                     rerun_all = false;
-                    break;
+                    goto clean_exercise;
                 }
 
                 if (exercise_state.failure_mode == NONE && exercise_state.marked_incomplete == true) {
-                    display(&exercise, &exercise_state, MARKED_INCOMPLETE);
+                    display(exercise, &exercise_state, MARKED_INCOMPLETE);
                     rerun_all = false;
-                    break;
+                    goto clean_exercise;
                 }
 
                 if (exercise_state.failure_mode == NONE && exercise_state.marked_incomplete == false) {
@@ -132,13 +132,14 @@ int main(int argc, char *argv[]) {
                 }
             }
 
-            free(exercise.exercise_files->files);
-            free(exercise.exercise_files);
+        clean_exercise:
+            free(exercise->exercise_files->files);
+            free(exercise->exercise_files);
+            free(exercise);
         }
 
     }
 
-    // FINAL CLEAN
     for (int di = 0; di < TOTAL_EXERCISES_DIRS; di++) {
         if (dirs[di]) {
             for (size_t e = 0; e < dirs[di]->file_ct; e++) {
