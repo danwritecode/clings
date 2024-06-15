@@ -89,7 +89,22 @@ bool is_marked_incompleted(char *file_contents, int file_contents_size) {
 }
 
 void add_dir(FileCollection **dirs, File *files, int file_ct, int dir_idx) {
-    printf("malloc dir_idx: %d\n", dir_idx);
+
+    //Free dir if not null
+    if(dirs[dir_idx] != NULL) {
+        if(dirs[dir_idx]->files != NULL) {
+            for (size_t e = 0; e < dirs[dir_idx]->file_ct; e++) {
+                free(dirs[dir_idx]->files[e].file_path);
+                free(dirs[dir_idx]->files[e].file_name);
+                free(dirs[dir_idx]->files[e].file_name_no_ext);
+                free(dirs[dir_idx]->files[e].parent_dir_path);
+                free(dirs[dir_idx]->files[e].file_contents);
+            }
+            free(dirs[dir_idx]->files);
+        }
+        free(dirs[dir_idx]);
+    }
+
     dirs[dir_idx] = malloc(sizeof(FileCollection));
     if(dirs[dir_idx] == NULL) {
         perror("Failed to allocate memory for dir");
@@ -231,11 +246,11 @@ int load_files(FileCollection **dirs) {
                 }
                 strcpy(dir_files[file_idx].parent_dir_path, nested_path);
 
-                printf("file diff test: dir_dix: %d, file_idx: %d\n", dir_idx, file_idx);
+                // printf("file diff test: dir_dix: %d, file_idx: %d\n", dir_idx, file_idx);
                 if (dirs != NULL && dirs[dir_idx] != NULL) {
-                    printf("file_Ct: %zu\n", dirs[dir_idx]->file_ct);
+                    // printf("file_Ct: %zu\n", dirs[dir_idx]->file_ct);
 
-                    printf("file: %s\n", dirs[dir_idx]->files[file_idx].file_name);
+                    // printf("file: %s\n", dirs[dir_idx]->files[file_idx].file_name);
                     char *old_file_contents = dirs[dir_idx]->files[file_idx].file_contents;
                     if (strcmp(file_contents, old_file_contents) != 0) {
                         dir_files[file_idx].file_diff = true;
@@ -260,7 +275,7 @@ int load_files(FileCollection **dirs) {
             }
         }
 
-        printf("dir_idx: %d, file_idx: %d\n", dir_idx, file_idx);
+        // printf("dir_idx: %d, file_idx: %d\n", dir_idx, file_idx);
         add_dir(dirs, dir_files, file_idx, dir_idx);
         total_exercise_file_ct += exercise_file_ct;
 

@@ -131,6 +131,7 @@ int main(int argc, char *argv[]) {
                     rerun_all = true;
                 }
             }
+
             free(exercise.exercise_files->files);
             free(exercise.exercise_files);
         }
@@ -138,19 +139,19 @@ int main(int argc, char *argv[]) {
     }
 
     // FINAL CLEAN
-
-    
     for (int di = 0; di < TOTAL_EXERCISES_DIRS; di++) {
-        for (size_t e = 0; e < dirs[di]->file_ct; e++) {
-            free(dirs[di]->files[e].file_path);
-            free(dirs[di]->files[e].file_contents);
-            free(dirs[di]->files[e].file_name);
-            free(dirs[di]->files[e].file_name_no_ext);
-            free(dirs[di]->files[e].parent_dir_path);
-        }
+        if (dirs[di]) {
+            for (size_t e = 0; e < dirs[di]->file_ct; e++) {
+                free(dirs[di]->files[e].file_path);
+                free(dirs[di]->files[e].file_name);
+                free(dirs[di]->files[e].file_name_no_ext);
+                free(dirs[di]->files[e].parent_dir_path);
+                free(dirs[di]->files[e].file_contents);
+            }
 
-        free(dirs[di]->files);
-        free(dirs[di]);
+            free(dirs[di]->files);
+            free(dirs[di]);
+        }
     }
 
     free(dirs);
