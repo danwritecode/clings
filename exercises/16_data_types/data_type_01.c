@@ -26,8 +26,10 @@ int main() {
     long long veryLargeNumber = 9223372036854775807;
     printf("Maximum long long value: %l\n", veryLargeNumber); // <-- Fix this line
 
-    printf("Range of unsigned long long: 0 to %llu\n", ); // <-- Fix this line
-    printf("Range of signed long long: %lld to %lld\n", ); // <-- Fix this line
+    printf("Range of unsigned long long: 0 to %llu\n", ); // <-- Fix this line (use symbolic constant limits.h)
+    printf("Range of signed long long: %lld to %lld\n", ); // <-- Fix this line (use symbolic constant)
+    printf("Range of unsigned char: %d to %d\n", ); // <-- Fix this line (Write a number)
+    printf("Range of signed char: %d to %d\n", ); // <-- Fix this line (write a number)
 
     double floatingPointNumber = 0.999999;
     int integerRepresentation = floatingPointButNotReally; // <-- Fix this line (use floatingPointNumber)
