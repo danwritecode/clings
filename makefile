@@ -18,9 +18,10 @@ obj/%.o: src/%.c
 	@mkdir -p obj
 	$(CC) $(CFLAGS) -c $< -o $@
 
+clear: clean
 clean:
 	rm -f $(OBJS) $(TARGET)
 	rm -rf obj
 
-.PHONY: all clean debug
+.PHONY: all clean clear debug
 
