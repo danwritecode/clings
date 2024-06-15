@@ -89,9 +89,15 @@ bool is_marked_incompleted(char *file_contents, int file_contents_size) {
 }
 
 void add_dir(FileCollection **dirs, File *files, int file_ct, int dir_idx) {
+    printf("malloc dir_idx: %d\n", dir_idx);
     dirs[dir_idx] = malloc(sizeof(FileCollection));
-    dirs[dir_idx]->files = malloc(sizeof(File) * file_ct);
+    if(dirs[dir_idx] == NULL) {
+        perror("Failed to allocate memory for dir");
+        exit(1);
+    }
 
+
+    dirs[dir_idx]->files = malloc(sizeof(File) * file_ct);
     if (dirs[dir_idx]->files == NULL) {
         perror("Failed to allocate memory for files in dir");
         exit(1);
@@ -225,7 +231,11 @@ int load_files(FileCollection **dirs) {
                 }
                 strcpy(dir_files[file_idx].parent_dir_path, nested_path);
 
-                if (dirs[dir_idx] != NULL) {
+                printf("file diff test: dir_dix: %d, file_idx: %d\n", dir_idx, file_idx);
+                if (dirs != NULL && dirs[dir_idx] != NULL) {
+                    printf("file_Ct: %zu\n", dirs[dir_idx]->file_ct);
+
+                    printf("file: %s\n", dirs[dir_idx]->files[file_idx].file_name);
                     char *old_file_contents = dirs[dir_idx]->files[file_idx].file_contents;
                     if (strcmp(file_contents, old_file_contents) != 0) {
                         dir_files[file_idx].file_diff = true;
@@ -250,6 +260,7 @@ int load_files(FileCollection **dirs) {
             }
         }
 
+        printf("dir_idx: %d, file_idx: %d\n", dir_idx, file_idx);
         add_dir(dirs, dir_files, file_idx, dir_idx);
         total_exercise_file_ct += exercise_file_ct;
 

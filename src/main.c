@@ -9,11 +9,12 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 
-const int TOTAL_EXERCISES_DIRS = 3; // TODO: Make this dynamic in the future
+int TOTAL_EXERCISES_DIRS = 3; // TODO: Make this dynamic in the future
 static volatile sig_atomic_t keep_running = 1;
 
 void exec_exercise(Exercise *exercise, ExecutionState *state);
@@ -22,9 +23,16 @@ bool is_file_diff(Exercise *exercise);
 
 static void sig_handler(int _);
 void print_usage();
+int count_dir(char *dir);
 
 int main(int argc, char *argv[]) {
     signal(SIGINT, sig_handler);
+
+    TOTAL_EXERCISES_DIRS = count_dir("./exercises");
+    if(TOTAL_EXERCISES_DIRS == -1) { 
+        return 1;
+    }
+
 
     int start_at = 1;
     int c;
@@ -56,7 +64,8 @@ int main(int argc, char *argv[]) {
     exercise_state.failing_file = -1;
     exercise_state.total_files = -1;
 
-    FileCollection **dirs = malloc(TOTAL_EXERCISES_DIRS * sizeof(FileCollection));
+
+    FileCollection **dirs = malloc(TOTAL_EXERCISES_DIRS * sizeof(FileCollection *));
     if (dirs == NULL) {
         perror("Failed allocate memory for dirs");
         exit(1);
@@ -127,6 +136,8 @@ int main(int argc, char *argv[]) {
         }
 
     }
+
+    // FINAL CLEAN
 
     
     for (int di = 0; di < TOTAL_EXERCISES_DIRS; di++) {
@@ -206,6 +217,26 @@ bool is_file_diff(Exercise *exercise) {
 static void sig_handler(int _) {
     (void)_;
     keep_running = 0;
+}
+
+int count_dir(char *dir) {
+    struct dirent *dp;
+    DIR *fd;
+
+    int dir_count = 0;
+
+    if ((fd = opendir(dir)) == NULL) {
+        fprintf(stderr, "count_dir: can't open %s\n", dir);
+        return -1;
+    }
+    while ((dp = readdir(fd)) != NULL) {
+        if (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, ".."))
+            continue;    /* skip self and parent */
+        dir_count++;
+    }
+    closedir(fd);
+
+    return dir_count;
 }
 
 void print_usage() {
