@@ -33,14 +33,14 @@ int main() {
     int integerRepresentation = floatingPointButNotReally; // <-- Fix this line (use floatingPointNumber)
     printf("Double to int casting result: %d\n", integerRepresentation);
 
-	bool understand = true;
+	bool understand = false;
 	unsigned int plus_one = 1;
 	int minus_one = -1;
 
-	if(plus_one < minus_one) { // <-- Fix this line
-		understand = false;
+	if(plus_one > minus_one) { // <-- Fix this line
+		understand = true;
 	} 
+	assert(understand);
 
-	assert(understand && "1 < -1");
 	return 0;
 }
