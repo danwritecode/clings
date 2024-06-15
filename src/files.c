@@ -117,6 +117,16 @@ int alphasort(const struct dirent **a, const struct dirent **b) {
     return strcasecmp((*a)->d_name, (*b)->d_name);
 }
 
+char* get_filename_no_ext(const char* filename) {
+    char* dot = strrchr(filename, '.');
+    if (!dot || dot == filename) return strdup(filename);
+    size_t len = dot - filename;
+    char* no_ext = malloc(len + 1);
+    if (!no_ext) return NULL;
+    strncpy(no_ext, filename, len);
+    no_ext[len] = '\0';
+    return no_ext;
+}
 
 /// Loops through target directory path and loads files into Directory double pointer and returns total exercise files
 int load_files(FileCollection **dirs) {
@@ -124,7 +134,7 @@ int load_files(FileCollection **dirs) {
     int ex_dirs_ct = scandir(DIR_PATH, &nmlist, NULL, alphasort);
 
     if (ex_dirs_ct < 0) {
-        perror("Could not open directory");
+        perror("could not open directory");
         exit(1);
     }
 
@@ -138,7 +148,6 @@ int load_files(FileCollection **dirs) {
         if (file_type != DIR_TYPE_CODE) continue;
         if (strcmp(de->d_name, "..") == 0 || strcmp(de->d_name, ".") == 0) continue;
 
-        // expecting only directories here at 1 layer depth, not using recursion cause lazy
         char *paths[] = { (char *)DIR_PATH, de->d_name };
         char *nested_path = build_file_path(paths, 2, "");
 
@@ -146,13 +155,14 @@ int load_files(FileCollection **dirs) {
         int ex_dirs_nested_ct = scandir(nested_path, &nmlist_nested, NULL, alphasort);
 
         if (ex_dirs_nested_ct < 0) {
-            perror("Could not open directory");
+            perror("could not open directory");
+            free(nested_path);
             exit(1);
         }
 
-        int file_idx = 0; // need this because not everything in a directory is an exercise file
+        int file_idx = 0;
         int exercise_file_ct = 0;
-        File *dir_files;
+        File *dir_files = NULL;
 
         for (int ndi = 0; ndi < ex_dirs_nested_ct; ndi++) {
             struct dirent *nde = nmlist_nested[ndi];
@@ -160,63 +170,61 @@ int load_files(FileCollection **dirs) {
             char *file_name = nde->d_name;
 
             if (file_type == FILE_TYPE_CODE) {
-                char *paths[] = { (char *)DIR_PATH, de->d_name, nde->d_name};
+                char *paths[] = { (char *)DIR_PATH, de->d_name, nde->d_name };
                 char *full_path = build_file_path(paths, 3, "");
                 char *file_contents = read_file_contents(full_path);
                 int dir_path_size = strlen(nested_path) + 1;
                 int file_path_size = strlen(full_path) + 1;
                 int file_name_size = strlen(file_name) + 1;
                 int file_contents_size = strlen(file_contents) + 1;
-                int file_type = strcmp(file_name, README_FILE_NM) == 0 ? README:EXERCISE;
+                int file_type = strcmp(file_name, README_FILE_NM) == 0 ? README : EXERCISE;
 
-                if (file_idx == 0) {
-                    dir_files = malloc(sizeof(File));
-                } else {
-                    dir_files = realloc(dir_files, (file_idx + 1) * sizeof(File));
-                }         
+                dir_files = realloc(dir_files, (file_idx + 1) * sizeof(File));
+                if (dir_files == NULL) {
+                    perror("failed to reallocate memory for dir_files");
+                    exit(1);
+                }
 
-                // file type
                 dir_files[file_idx].file_type = file_type;
 
-                // file path
                 dir_files[file_idx].file_path = malloc(file_path_size);
+                if (dir_files[file_idx].file_path == NULL) {
+                    perror("failed to allocate memory for file_path");
+                    exit(1);
+                }
                 strcpy(dir_files[file_idx].file_path, full_path);
 
-                // file name
                 dir_files[file_idx].file_name = malloc(file_name_size);
+                if (dir_files[file_idx].file_name == NULL) {
+                    perror("failed to allocate memory for file_name");
+                    exit(1);
+                }
                 strcpy(dir_files[file_idx].file_name, file_name);
 
-                if (file_type == EXERCISE) {
-                    // create file name no extension
-                    dir_files[file_idx].file_name_no_ext = malloc(file_name_size - 2);
-                    strncpy(dir_files[file_idx].file_name_no_ext, file_name, file_name_size - 3);
-                    dir_files[file_idx].file_name_no_ext[file_name_size - 3] = '\0';
+                dir_files[file_idx].file_name_no_ext = get_filename_no_ext(file_name);
+                if (dir_files[file_idx].file_name_no_ext == NULL) {
+                    perror("failed to allocate memory for file_name_no_ext");
+                    exit(1);
+                }
 
-                    // check to see if user has marked exercise as completed
+                if (file_type == EXERCISE) {
                     bool marked_complete = is_marked_incompleted(file_contents, file_contents_size);
                     dir_files[file_idx].marked_incomplete = marked_complete;
 
                     exercise_file_ct++;
                 } else if (file_type == README) {
-                    dir_files[file_idx].file_name_no_ext = malloc(file_name_size - 2);
-                    strncpy(dir_files[file_idx].file_name_no_ext, file_name, file_name_size - 4);
-                    dir_files[file_idx].file_name_no_ext[file_name_size - 4] = '\0';
-
-                    // set completeness flag
                     dir_files[file_idx].marked_incomplete = false;
                 } else {
-                    dir_files[file_idx].file_name_no_ext = malloc(file_name_size);
-                    strcpy(dir_files[file_idx].file_name_no_ext, file_name);
-
-                    // set completeness flag
                     dir_files[file_idx].marked_incomplete = false;
                 }
 
-                // dir path
                 dir_files[file_idx].parent_dir_path = malloc(dir_path_size);
+                if (dir_files[file_idx].parent_dir_path == NULL) {
+                    perror("failed to allocate memory for parent_dir_path");
+                    exit(1);
+                }
                 strcpy(dir_files[file_idx].parent_dir_path, nested_path);
 
-                // get existing file contents to find if there's a diff
                 if (dirs[dir_idx] != NULL) {
                     char *old_file_contents = dirs[dir_idx]->files[file_idx].file_contents;
                     if (strcmp(file_contents, old_file_contents) != 0) {
@@ -228,8 +236,11 @@ int load_files(FileCollection **dirs) {
                     dir_files[file_idx].file_diff = false;
                 }
 
-                // file contents
                 dir_files[file_idx].file_contents = malloc(file_contents_size);
+                if (dir_files[file_idx].file_contents == NULL) {
+                    perror("failed to allocate memory for file_contents");
+                    exit(1);
+                }
                 strcpy(dir_files[file_idx].file_contents, file_contents);
 
                 file_idx++;
@@ -242,7 +253,6 @@ int load_files(FileCollection **dirs) {
         add_dir(dirs, dir_files, file_idx, dir_idx);
         total_exercise_file_ct += exercise_file_ct;
 
-        // free dir_files
         for (int i = 0; i < file_idx; i++) {
             free(dir_files[i].parent_dir_path);
             free(dir_files[i].file_path);
@@ -250,12 +260,20 @@ int load_files(FileCollection **dirs) {
             free(dir_files[i].file_name);
             free(dir_files[i].file_name_no_ext);
         }
+        free(dir_files);
 
         dir_idx++;
         free(nested_path);
+
+        for (int i = 0; i < ex_dirs_nested_ct; i++) {
+            free(nmlist_nested[i]);
+        }
         free(nmlist_nested);
     }
 
+    for (int di = 0; di < ex_dirs_ct; di++) {
+        free(nmlist[di]);
+    }
     free(nmlist);
 
     return total_exercise_file_ct;
