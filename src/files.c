@@ -281,12 +281,8 @@ int load_files(FileCollection **dirs)
                 }
                 strcpy(dir_files[file_idx].parent_dir_path, nested_path);
 
-                // printf("file diff test: dir_dix: %d, file_idx: %d\n", dir_idx, file_idx);
                 if (dirs != NULL && dirs[dir_idx] != NULL)
                 {
-                    // printf("file_Ct: %zu\n", dirs[dir_idx]->file_ct);
-
-                    // printf("file: %s\n", dirs[dir_idx]->files[file_idx].file_name);
                     char *old_file_contents = dirs[dir_idx]->files[file_idx].file_contents;
                     if (strcmp(file_contents, old_file_contents) != 0)
                     {
@@ -317,7 +313,6 @@ int load_files(FileCollection **dirs)
             }
         }
 
-        // printf("dir_idx: %d, file_idx: %d\n", dir_idx, file_idx);
         add_dir(dirs, dir_files, file_idx, dir_idx);
         total_exercise_file_ct += exercise_file_ct;
 
