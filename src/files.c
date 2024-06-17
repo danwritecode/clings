@@ -172,6 +172,7 @@ int load_files(FileCollection **dirs) {
             continue;
 
         char *paths[] = {(char *)DIR_PATH, de->d_name};
+
         char *nested_path = build_file_path(paths, 2, "");
 
         struct dirent **nmlist_nested;
@@ -195,12 +196,14 @@ int load_files(FileCollection **dirs) {
 
             if (file_type == FILE_TYPE_CODE) {
                 char *paths[] = {(char *)DIR_PATH, de->d_name, nde->d_name};
+
                 char *full_path = build_file_path(paths, 3, "");
                 char *file_contents = read_file_contents(full_path);
                 int dir_path_size = strlen(nested_path) + 1;
                 int file_path_size = strlen(full_path) + 1;
                 int file_name_size = strlen(file_name) + 1;
                 int file_contents_size = strlen(file_contents) + 1;
+
                 int file_type =
                     strcmp(file_name, README_FILE_NM) == 0 ? README : EXERCISE;
 
@@ -236,6 +239,7 @@ int load_files(FileCollection **dirs) {
                 if (file_type == EXERCISE) {
                     bool marked_complete = is_marked_incompleted(
                         file_contents, file_contents_size);
+
                     dir_files[file_idx].marked_incomplete = marked_complete;
 
                     exercise_file_ct++;
@@ -255,6 +259,7 @@ int load_files(FileCollection **dirs) {
                 if (dirs != NULL && dirs[dir_idx] != NULL) {
                     char *old_file_contents =
                         dirs[dir_idx]->files[file_idx].file_contents;
+
                     if (strcmp(file_contents, old_file_contents) != 0) {
                         dir_files[file_idx].file_diff = true;
                     } else {

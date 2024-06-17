@@ -149,9 +149,6 @@ int main(int argc, char *argv[]) {
             free(exercise->exercise_files);
             free(exercise);
             }
-
-            free(exercise.exercise_files->files);
-            free(exercise.exercise_files);
         }
 
     for (int di = 0; di < TOTAL_EXERCISES_DIRS; di++) {
@@ -163,16 +160,13 @@ int main(int argc, char *argv[]) {
                 free(dirs[di]->files[e].parent_dir_path);
                 free(dirs[di]->files[e].file_contents);
             }
-
             free(dirs[di]->files);
             free(dirs[di]);
         }
-
-        free(dirs);
     }
 
     free(dirs);
-
+          
     return 0;
 }
 
