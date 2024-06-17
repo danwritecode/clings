@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -ggdb3 -Wall -Wextra -Werror -I./include
+CFLAGS = -g -Wall -Wextra -Werror -I./include
 
 SRCS = src/main.c src/files.c src/utils.c src/runna.c src/exercise.c src/display.c
 OBJS = $(SRCS:src/%.c=obj/%.o)
