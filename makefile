@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -I./include
+CFLAGS = -g -Wall -Wextra -Werror -I./include
 
 SRCS = src/main.c src/files.c src/utils.c src/runna.c src/exercise.c src/display.c
 OBJS = $(SRCS:src/%.c=obj/%.o)
@@ -18,9 +18,10 @@ obj/%.o: src/%.c
 	@mkdir -p obj
 	$(CC) $(CFLAGS) -c $< -o $@
 
+clear: clean
 clean:
 	rm -f $(OBJS) $(TARGET)
 	rm -rf obj
 
-.PHONY: all clean debug
+.PHONY: all clean clear debug
 

@@ -3,16 +3,13 @@
 #include <stdlib.h>
 
 
-Exercise create_exercise(FileCollection *dirs) {
-    char *readme = get_readme(dirs);
-    FileCollection *exercises = get_exercises(dirs);
+Exercise *create_exercise(FileCollection *dirs) {
+    Exercise *exercise = malloc(sizeof(Exercise));
 
-    Exercise res = {
-        readme,
-        exercises
-    };
+    exercise->readme = get_readme(dirs);
+    exercise->exercise_files = get_exercises(dirs);
 
-    return res;
+    return exercise;
 }
 
 char* get_readme(FileCollection *dir) {
