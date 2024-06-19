@@ -51,6 +51,8 @@ To get started, find an exercise you want to work on and create a PR for it. The
 3. Create 1 or more ".c" exercise files. The file(s) should either fail to compile, or run, or both.
     - The exercise files should be interactive, they should lead the user to learning the things they need to learn.
     - If multiple exercises are needed to have then build up knowledge, then this is fine.
+  
+**Note:** The objective is not to directly copy the examples or code in the book. We want to create exercises based on the concepts covered in the chapter. The book is serving as a rough guideline for the exercises. Once we have all the exercises from the book, all contributors will work together to figure out how to consolidate and come up with a final set of exercises as the book can be redundant in some spots.
 
 Feel free to ask questions if you need more details.
 
