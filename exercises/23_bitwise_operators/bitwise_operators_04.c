@@ -33,9 +33,9 @@ int main(void) {
 	if(a == b) return 0;
 
 	// Fix code
-	a ^= b;
+	a = a ^ b;
 	
-	a ^= b;
+	a = a ^ b;
 	// Fix code
 
 
