@@ -1,60 +1,46 @@
 /*
- * Bit Manipulation Exercise: Swap Most Significant Bit (MSB) and Least Significant Bit (LSB)
+ * XOR Swap Algorithm
  *
- * Your task is to implement the `swap_edge_bits` function, which swaps the MSB and LSB of an 8-bit unsigned char.
+ * The XOR (exclusive or) operator has special properties that allow us to swap two values
+ * without using a temporary variable. This technique is called the XOR swap.
  *
- * MSB = Most Significant Bit (leftmost bit)
- * LSB = Least Significant Bit (rightmost bit)
+ * How XOR works:
+ * - When you XOR a bit with 0, it remains unchanged
+ * - When you XOR a bit with 1, it flips (0 becomes 1, and 1 becomes 0)
+ * - XOR is commutative: a XOR b = b XOR a
+ * - XOR is associative: (a XOR b) XOR c = a XOR (b XOR c)
  *
  * Example:
- * Input:  10000000 (decimal 128)
- * Output: 00000001 (decimal 1)
+ * Let a = 1010 and b = 0011
+ * Step 1: a = a XOR b  ->  a = 1010 XOR 0011 = 1001,  b = 0011
+ * Step 2: b = a XOR b  ->  a = 1001,  b = 1001 XOR 0011 = 1010
+ * Step 3: a = a XOR b  ->  a = 1001 XOR 1010 = 0011,  b = 1010
  *
- * The function should follow these steps:
- * 1. Extract the MSB, move to LSB
- * 2. Extract the LSB, move to MSB
- * 3. Create a mask to clear both MSB and LSB
- * 4. Combine the extracted bits with the masked value
+ * Result: The values of 'a' and 'b' have been swapped.
  *
- * This exercise demonstrates bitwise operations and manipulations on individual bits.
+ * Task: Use these properties of XOR to swap the values of 'a' and 'b' without using a temporary variable.
  */
 
 // ❌ I AM NOT DONE
 
 #include <assert.h>
-#include <limits.h>
-#include <stdio.h>
-
-void print_bits(unsigned char num) {
-	printf("%3d: ", num);
-	for(long i = sizeof(num) * CHAR_BIT - 1; i >= 0; i--) {
-		printf("%d ", (num >> i) & 1);
-	}
-
-	printf("\n");
-}
-
-// unsigned char has 8 bits
-unsigned char swap_edge_bits(unsigned char num) {
-	unsigned char msb = ; // <-- Fix here
-	unsigned char lsb = ; // <-- Fix here
-	unsigned char mask = ; // <-- Fix here
-
-	num = num  mask  msb  lsb; // <-- Fix here
-	
-	return num;
-}
-
 
 int main(void) {
 	
-	unsigned char i = 128;
-	print_bits(i);
+	int a = 11;
+	int b = 42;
 
-	i = swap_edge_bits(i);
+	if(a == b) return 0;
 
-	print_bits(i); 
-	assert(i == 1);
+	// Fix code
+	a ^= b;
+	
+	a ^= b;
+	// Fix code
+
+
+	assert(a == 42);
+	assert(b == 11);
 
 	return 0;
 }
