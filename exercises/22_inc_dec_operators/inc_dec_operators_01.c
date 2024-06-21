@@ -23,7 +23,7 @@ int main() {
 	j = j - 1; // <-- Fix here 
 	
 	// DO NOT CHANGE
-	assert(j == 1);
+	assert(i == 1);
 	assert(j == 1);
 	
 	k = (i+j)++; // <-- Fix bug
