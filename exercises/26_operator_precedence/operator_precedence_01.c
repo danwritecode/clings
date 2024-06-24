@@ -82,7 +82,7 @@ void withdraw(int account, int amount) {
 void transfer(int from, int to, int amount) {
     int fee = calculate_fee(from) + calculate_fee(to);
     balances[from] -= (amount + fee / 2);
-    balances[to] += (amount - fee / 2);  // MISTAKE: Incorrect fee distribution
+    balances[to] += (amount + fee / 2);  // <-- Fix here 
 }
 
 void apply_interest(int account) {
