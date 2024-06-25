@@ -17,7 +17,6 @@
 // ❌ I AM NOT DONE
 
 #include <assert.h>
-#include <stdio.h>
 
 // TODO: Finish the function
 my_strlen(char *s) {
@@ -38,7 +37,6 @@ int main(void) {
 	// Put into my_strlen function
 
 	//DO NOT CHANGE
-	printf("len: %d\n", len);
 	assert(my_strlen(s) == 13);
 
 	return 0;
