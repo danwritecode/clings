@@ -221,7 +221,9 @@ static void sig_handler(int _) {
     (void)_;
     keep_running = 0;
 }
-
+#ifdef _WIN32
+#define count_dir win_count_dir
+#else
 int count_dir(char *dir) {
     struct dirent *dp;
     DIR *fd;
@@ -241,6 +243,7 @@ int count_dir(char *dir) {
 
     return dir_count;
 }
+#endif
 
 void print_usage() {
     printf("Usage:\n\n"

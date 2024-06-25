@@ -34,3 +34,17 @@ int scandir(
 	FindClose(hFind);
 	return 1;
 }
+int win_count_dir(char *dir)
+{
+    int dir_count;
+	WIN32_FIND_DATA FindFileData;
+	HANDLE hFind = FindFirstFile(dir,&FindFileData);
+	if (hFind == INVALID_HANDLE_VALUE) return -1;
+	while(FindNextFile(hFind, &FindFileData)) {
+		if (!strcmp(FindFileData.cFileName, ".") || !strcmp(FindFileData.cFileName, ".."))
+            continue; /* skip self and parent */
+        dir_count++;
+	}
+	FindClose(hFind);
+	return dir_count;
+}
