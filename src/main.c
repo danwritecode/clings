@@ -4,8 +4,8 @@
 #include "files.h"
 #include "runna.h"
 #include "utils.h"
+#include "osddirent.h"
 
-#include <dirent.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
