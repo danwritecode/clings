@@ -29,6 +29,7 @@
 #define EPSILON 1e-6
 
 // Implement this function
+// TODO: correct return type
 triangle_area(double a, double b, double c) {
 	// TODO: Check if all sides are positive
 	if () {
