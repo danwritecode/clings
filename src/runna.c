@@ -65,7 +65,7 @@ int exec_cmd_output(char *command) {
 int exec_compile_output(char *file_path, char *file_name_no_ext) {
     int path_len = strlen(file_path);
     int file_name_len = strlen(file_name_no_ext);
-    int buff_size = path_len + file_name_len + 45; // 35 is for gcc flags and other stuff
+    int buff_size = path_len + file_name_len + 48; // 35 is for gcc flags and other stuff
 
     // check for BIN_PATH
     DIR* dir = opendir(BIN_PATH);
@@ -86,7 +86,7 @@ int exec_compile_output(char *file_path, char *file_name_no_ext) {
     // create snprintf buffer
     char *compile_cmd = malloc(buff_size);
     // snprintf(compile_cmd, buff_size, "gcc %s -o %s/%s -Wall -Wextra -Werror", file_path, BIN_PATH ,file_name_no_ext);
-    snprintf(compile_cmd, buff_size, "gcc %s -o %s/%s", file_path, BIN_PATH ,file_name_no_ext);
+    snprintf(compile_cmd, buff_size, "gcc %s -o %s/%s -lm", file_path, BIN_PATH ,file_name_no_ext);
 
     int res_code = exec_cmd_output(compile_cmd);
 
@@ -107,7 +107,7 @@ int exec_run_output(char *file_name_no_ext) {
 int exec_compile(char *file_path, char *file_name_no_ext) {
     int path_len = strlen(file_path);
     int file_name_len = strlen(file_name_no_ext);
-    int buff_size = path_len + file_name_len + 45; // 35 is for gcc flags and other stuff
+    int buff_size = path_len + file_name_len + 48; // 35 is for gcc flags and other stuff
 
     // check for BIN_PATH
     DIR* dir = opendir(BIN_PATH);
@@ -124,7 +124,7 @@ int exec_compile(char *file_path, char *file_name_no_ext) {
     // create snprintf buffer
     char *compile_cmd = malloc(buff_size);
     // snprintf(compile_cmd, buff_size, "gcc %s -o %s/%s -Wall -Wextra -Werror", file_path, BIN_PATH ,file_name_no_ext);
-    snprintf(compile_cmd, buff_size, "gcc %s -o %s/%s", file_path, BIN_PATH ,file_name_no_ext);
+    snprintf(compile_cmd, buff_size, "gcc %s -o %s/%s -lm", file_path, BIN_PATH ,file_name_no_ext);
 
 	printf("compile statement: %s \n", compile_cmd);
     int res_code = exec_cmd(compile_cmd);
