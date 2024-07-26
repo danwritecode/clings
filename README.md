@@ -40,13 +40,14 @@ make
 ```
 6. Start at exercise_01 and continue from there
 
-# Start script
+# Start Script
 
-If you are on Linux, you can run start.sh to get set up and going. 
+If you are on Linux, you can run start.sh to get set up and going.  It will clone the repo & install the requirements, and make a tmux split screen to start immediately.
 ```bash
 # Run this command from the root of the repository
 sh start.sh
 ```
+
 
 # Contributions
 The best way to contribute is by helping me create new exercises. I have created an issue for each exercise that needs to be created. The issues follow the flow of "The C Programming Language" book.
