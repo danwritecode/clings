@@ -40,6 +40,15 @@ make
 ```
 6. Start at exercise_01 and continue from there
 
+# Start script
+
+If you are on Linux, you can run start.sh to get set up and going. 
+```bash
+# Run this command from the root of the repository
+sh start.sh
+```
+![start_script](https://raw.githubusercontent.com/tunahorse/clings/setup_script/start_script.gif)
+
 # Contributions
 The best way to contribute is by helping me create new exercises. I have created an issue for each exercise that needs to be created. The issues follow the flow of "The C Programming Language" book.
 
