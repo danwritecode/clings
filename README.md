@@ -45,7 +45,7 @@ make
 If you are on Linux, you can run start.sh to get set up and going.  It will clone the repo & install the requirements, and make a tmux split screen to start immediately.
 ```bash
 # Run this command from the root of the repository
-sh start.sh
+sudo sh start.sh
 ```
 
 
