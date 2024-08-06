@@ -42,10 +42,10 @@ make
 
 # Start Script
 
-If you are on Linux, you can run start.sh to get set up and going.  It will clone the repo & install the requirements, and make a tmux split screen to start immediately.
+If you are on a Debian distro, you can run start_debian.sh to get set up and going.  It will clone the repo & ask you to install the requirements and make a Tmux split screen to start immediately.
 ```bash
 # Run this command from the root of the repository
-sudo sh start.sh
+sudo sh start_debian.sh
 ```
 
 
