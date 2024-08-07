@@ -40,6 +40,15 @@ make
 ```
 6. Start at exercise_01 and continue from there
 
+# Start Script
+
+If you are on a Debian distro, you can run start_debian.sh to get set up and going.  It will clone the repo & ask you to install the requirements and make a Tmux split screen to start immediately.
+```bash
+# Run this command from the root of the repository
+sudo sh start_debian.sh
+```
+
+
 # Contributions
 The best way to contribute is by helping me create new exercises. I have created an issue for each exercise that needs to be created. The issues follow the flow of "The C Programming Language" book.
 
