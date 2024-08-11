@@ -74,7 +74,11 @@ int exec_compile_output(char *file_path, char *file_name_no_ext) {
         closedir(dir);
     } else if (ENOENT == errno) {
         // need to make BIN_PATH
+		#ifdef _WIN32
+        mkdir(BIN_PATH);
+		#else
         mkdir(BIN_PATH, 0700);
+		#endif
     } else {
         perror("probing BIN_PATH failed");
     }

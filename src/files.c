@@ -1,5 +1,5 @@
 #include "files.h"
-#include <dirent.h>
+// #include <dirent.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -152,7 +152,7 @@ char *get_filename_no_ext(const char *filename) {
 /// pointer and returns total exercise files
 int load_files(FileCollection **dirs) {
     struct dirent **nmlist;
-    int ex_dirs_ct = scandir(DIR_PATH, &nmlist, NULL, alphasort);
+    int ex_dirs_ct = scandir(DIR_PATH, &nmlist, NULL, alphasort); // important line 
 
     if (ex_dirs_ct < 0) {
         perror("could not open directory");
