@@ -42,11 +42,17 @@ make
 
 # Start Script
 
-If you are on a Debian distro, you can run start_debian.sh to get set up and going.  It will clone the repo & ask you to install the requirements and make a Tmux split screen to start immediately.
-```bash
-# Run this command from the root of the repository
-sudo sh start_debian.sh
-```
+If you are on a Debian-based distribution, you can use the `start_debian.sh` script to set up your environment. This script will download the repository, install necessary packages, and set up a Tmux split screen for immediate use.
+
+### Instructions:
+
+1. **Download and run the script**:
+
+   ```bash
+   sudo wget https://raw.githubusercontent.com/danwritecode/clings/master/start_debian.sh -O start_debian.sh
+   sudo chmod +x start_debian.sh
+   sudo ./start_debian.sh
+
 
 
 # Contributions
