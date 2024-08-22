@@ -82,17 +82,70 @@ void reset_directory(const char *master, const char *working) {
     closedir(dir);
 }
 
-int main() {
-   // Ask user before we nuke to be safe
-    printf("Are you sure you want to reset? This will delete all progress. (y/n): ");
-    char response;
-    scanf(" %c", &response);
-    if (response != 'y' && response != 'Y') {
-        printf("Reset cancelled.\n");
-        return 0;
+void reset_exercise(int exercise_number) {
+    DIR *master_dir = opendir("./master_exercises_read_only");
+    DIR *working_dir = opendir("./exercises");
+    struct dirent *entry;
+    char number_prefix[3];
+    int exercises_reset = 0;
+
+    if (master_dir == NULL || working_dir == NULL) {
+        perror("opendir");
+        return;
     }
 
-    reset_directory("./master_exercises_read_only", "./exercises");
-    printf("Reset complete!\n");
+    snprintf(number_prefix, sizeof(number_prefix), "%02d", exercise_number);
+
+    printf("Resetting exercise(s) starting with %s...\n", number_prefix);
+
+    while ((entry = readdir(master_dir)) != NULL) {
+        if (strncmp(entry->d_name, number_prefix, 2) == 0) {
+            char full_master_path[1024], full_working_path[1024];
+            snprintf(full_master_path, sizeof(full_master_path), "./master_exercises_read_only/%s", entry->d_name);
+            snprintf(full_working_path, sizeof(full_working_path), "./exercises/%s", entry->d_name);
+            
+            printf("Resetting: %s\n", entry->d_name);
+            reset_directory(full_master_path, full_working_path);
+            exercises_reset++;
+        }
+    }
+
+    closedir(master_dir);
+    closedir(working_dir);
+
+    if (exercises_reset > 0) {
+        printf("Reset complete for %d exercise(s) starting with %s!\n", exercises_reset, number_prefix);
+    } else {
+        printf("No exercises found starting with %s.\n", number_prefix);
+    }
+}
+
+int main() {
+    // nuke or choose
+    int exercise_number;
+    printf("Enter the exercise number you want to reset ex '01' (or 0 to reset all): ");
+    scanf("%d", &exercise_number);
+
+    if (exercise_number == 0) {
+        printf("Are you sure you want to reset all exercises? This will delete all progress. (y/n): ");
+        char response;
+        scanf(" %c", &response);
+        if (response != 'y' && response != 'Y') {
+            printf("Reset cancelled.\n");
+            return 0;
+        }
+        reset_directory("./master_exercises_read_only", "./exercises");
+        printf("All exercises have been reset!\n");
+    } else {
+        printf("Are you sure you want to reset exercise(s) starting with %02d? This will delete all progress for these exercise(s). (y/n): ", exercise_number);
+        char response;
+        scanf(" %c", &response);
+        if (response != 'y' && response != 'Y') {
+            printf("Reset cancelled.\n");
+            return 0;
+        }
+        reset_exercise(exercise_number);
+    }
+
     return 0;
 }
