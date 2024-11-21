@@ -109,6 +109,13 @@ void reset_directory(const char *master, const char *working) {
     closedir(dir);
 }
 
+int get_confirmation(const char *message) {
+    char response;
+    printf("%s (y/n): ", message);
+    scanf(" %c", &response);
+    return response == 'y' || response == 'Y';
+}
+
 void reset_exercise(int exercise_number) {
     DIR *master_dir = opendir("./master_exercises_read_only");
     if (master_dir == NULL) {
@@ -161,38 +168,36 @@ int main() {
         return 1;
     }
 
-    // clean up input
     input[strcspn(input, "\n")] = 0;
 
-    // make sure input is g2g
     if (strlen(input) > 2 || !isdigit(input[0]) || (strlen(input) == 2 && !isdigit(input[1]))) {
         fprintf(stderr, "Invalid input. Please enter a number between 00 and 99, or 0.\n");
         return 1;
     }
 
     exercise_number = atoi(input);
-    // nuke or choose number 
-    if (exercise_number == 0) {
-        printf("Are you sure you want to reset all exercises? This will delete all progress. (y/n): ");
-    } else if (exercise_number > 0 && exercise_number <= 99) {
-        printf("Are you sure you want to reset exercise(s) %02d? This will delete all progress for these exercise(s). (y/n): ", exercise_number);
-    } else {
-        fprintf(stderr, "Invalid exercise number. Please enter a number between 00 and 99, or 0 for all exercises.\n");
-        return 1;
-    }
-
-    char response;
-    scanf(" %c", &response);
-    if (response != 'y' && response != 'Y') {
-        printf("Reset cancelled.\n");
-        return 0;
-    }
 
     if (exercise_number == 0) {
+        if (!get_confirmation("Are you sure you want to reset all exercises? This will delete all progress")) {
+            printf("Reset cancelled.\n");
+            return 0;
+        }
         reset_directory("./master_exercises_read_only", "./exercises");
         printf("All exercises have been reset!\n");
-    } else {
+    } else if (exercise_number > 0 && exercise_number <= 99) {
+        char confirm_message[120];
+        snprintf(confirm_message, sizeof(confirm_message), 
+                 "Are you sure you want to reset exercise(s) %02d? This will delete all progress for these exercise(s)", 
+                 exercise_number);
+
+        if (!get_confirmation(confirm_message)) {
+            printf("Reset cancelled.\n");
+            return 0;
+        }
         reset_exercise(exercise_number);
+    } else {
+        fprintf(stderr, "Invalid exercise number. Please enter a number between 01 and 99, or 0 for all exercises.\n");
+        return 1;
     }
 
     return 0;
