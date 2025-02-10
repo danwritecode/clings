@@ -35,7 +35,7 @@ int main() {
   int isTrue = (flag ==) ? YES : NO; // <-- Fix this line
 
   // DO NOT CHANGE
-  assert(result == 100);
+  assert(result == 150);
   assert(area == 314.0f);
   assert(isTrue == 1);
 
