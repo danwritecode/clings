@@ -16,6 +16,8 @@
 
 // Hint: convert number `a` and `b` to binary. 
 
+// ❌ I AM NOT DONE
+
 #include <assert.h>
 #include <limits.h>
 #include <stdbool.h>
