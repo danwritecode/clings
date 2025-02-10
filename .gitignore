@@ -9,3 +9,4 @@ clings_debug
 compile_commands.json
 .cache
 tags
+.vscode
