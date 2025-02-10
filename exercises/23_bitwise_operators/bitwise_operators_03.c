@@ -15,6 +15,7 @@
  * 2. Apply the mask to the given byte using the bitwise AND operator.
  */
 
+// ❌ I AM NOT DONE
 
 #include <assert.h>
 #include <limits.h>
