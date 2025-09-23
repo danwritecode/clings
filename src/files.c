@@ -193,6 +193,7 @@ int load_files(FileCollection **dirs) {
             struct dirent *nde = nmlist_nested[ndi];
             int file_type = nde->d_type;
             char *file_name = nde->d_name;
+            if(file_name[0] == '.') continue; // skip .DS_Store
 
             if (file_type == FILE_TYPE_CODE) {
                 char *paths[] = {(char *)DIR_PATH, de->d_name, nde->d_name};
