@@ -11,7 +11,7 @@
 
 #define BIN_PATH "./bin"
 
-const int MAX_LINES = 500;
+#define MAX_LINES 500
 int exec_cmd(char *command) {
 	FILE *fp;
 	int status;
